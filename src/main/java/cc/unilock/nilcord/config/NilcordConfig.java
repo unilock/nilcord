@@ -1,4 +1,4 @@
-package cc.unilock.nilcord;
+package cc.unilock.nilcord.config;
 
 import folk.sisby.kaleido.api.ReflectiveConfig;
 

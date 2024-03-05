@@ -1,5 +1,6 @@
-package cc.unilock.nilcord;
+package cc.unilock.nilcord.transformer;
 
+import cc.unilock.nilcord.NilcordPremain;
 import net.minecraft.entity.player.EntityServerPlayer;
 import net.minecraft.util.DamageSource;
 import nilloader.api.lib.mini.MiniTransformer;
@@ -15,7 +16,7 @@ public class EntityServerPlayerTransformer extends MiniTransformer {
 		ctx.add(
 				ALOAD(0),
 				ALOAD(1),
-				INVOKESTATIC("cc/unilock/nilcord/EntityServerPlayerTransformer$Hooks", "death", "(Lnet/minecraft/entity/player/EntityServerPlayer;Lnet/minecraft/util/DamageSource;)V")
+				INVOKESTATIC("cc/unilock/nilcord/transformer/EntityServerPlayerTransformer$Hooks", "death", "(Lnet/minecraft/entity/player/EntityServerPlayer;Lnet/minecraft/util/DamageSource;)V")
 		);
 	}
 

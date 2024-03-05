@@ -1,5 +1,6 @@
-package cc.unilock.nilcord;
+package cc.unilock.nilcord.transformer;
 
+import cc.unilock.nilcord.NilcordPremain;
 import net.minecraft.stats.StatBase;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
@@ -13,7 +14,7 @@ public class EntityPlayerTransformer extends MiniTransformer {
 
 		ctx.add(
 				ALOAD(1),
-				INVOKESTATIC("cc/unilock/nilcord/EntityPlayerTransformer$Hooks", "achievement", "(Lnet/minecraft/stats/StatBase;)V")
+				INVOKESTATIC("cc/unilock/nilcord/transformer/EntityPlayerTransformer$Hooks", "achievement", "(Lnet/minecraft/stats/StatBase;)V")
 		);
 	}
 

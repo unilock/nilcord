@@ -1,5 +1,7 @@
 package cc.unilock.nilcord;
 
+import cc.unilock.nilcord.transformer.EntityPlayerTransformer;
+import cc.unilock.nilcord.transformer.EntityServerPlayerTransformer;
 import nilloader.api.ClassTransformer;
 import nilloader.api.ModRemapper;
 import nilloader.api.NilLogger;
