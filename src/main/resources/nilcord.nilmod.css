@@ -6,5 +6,5 @@
 }
 
 entrypoints {
-	premain: "cc.unilock.nilcord.NilExamplePremain";
+	premain: "cc.unilock.nilcord.NilcordPremain";
 }
