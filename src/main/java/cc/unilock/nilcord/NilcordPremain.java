@@ -10,6 +10,7 @@ public class NilcordPremain implements Runnable {
 	@Override
 	public void run() {
 		ModRemapper.setTargetMapping("default");
+
 		ClassTransformer.register(new EntityPlayerTransformer());
 		ClassTransformer.register(new EntityServerPlayerTransformer());
 	}
