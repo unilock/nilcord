@@ -1,0 +1,10 @@
+@nilmod {
+	name: "Nilcord";
+	description: "A Discord bridge for Minecraft 1.4.7 using NilLoader.";
+	authors: "unilock";
+	version: "${version}";
+}
+
+entrypoints {
+	premain: "cc.unilock.nilcord.NilExamplePremain";
+}
