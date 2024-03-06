@@ -12,7 +12,7 @@ public class NetServerHandlerTransformer extends MiniTransformer {
 	@Patch.Method("handleChat(Lnet/minecraft/network/packet/Packet3Chat;)V")
 	public void patchHandleChat(PatchContext ctx) {
 		ctx.search(
-				GETSTATIC("net/minecraft/network/NetServerHandler", "logger", "Ljava/util/logging/Logger")
+				GETSTATIC("net/minecraft/network/NetServerHandler", "logger", "Ljava/util/logging/Logger;")
 		).jumpBefore();
 
 		ctx.add(
