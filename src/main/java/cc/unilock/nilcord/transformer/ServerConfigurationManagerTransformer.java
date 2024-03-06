@@ -30,11 +30,11 @@ public class ServerConfigurationManagerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void join(EntityServerPlayer player) {
-			NilcordPremain.LOGGER.info(player.username+" joined the game");
+			NilcordPremain.listener.playerJoin(player);
 		}
 
 		public static void leave(EntityServerPlayer player) {
-			NilcordPremain.LOGGER.info(player.username+" left the game");
+			NilcordPremain.listener.playerLeave(player);
 		}
 	}
 }

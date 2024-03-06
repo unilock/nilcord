@@ -1,7 +1,7 @@
 package cc.unilock.nilcord.transformer;
 
+import cc.unilock.nilcord.EventListener;
 import cc.unilock.nilcord.NilcordPremain;
-import net.minecraft.server.MinecraftServer;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
 import nilloader.api.lib.mini.annotation.Patch;
@@ -19,8 +19,9 @@ public class DedicatedServerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void serverStart() {
-			NilcordPremain.LOGGER.info("Server started!");
-			NilcordPremain.server = MinecraftServer.getServer();
+			// Has to be done here, since EntityPlayer doesn't exist during nilmod init
+			NilcordPremain.listener = new EventListener();
+			NilcordPremain.listener.serverStart();
 		}
 	}
 }

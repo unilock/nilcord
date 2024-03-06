@@ -24,7 +24,7 @@ public class NetServerHandlerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void chatMessage(NetServerHandler netServerHandler, Packet3Chat packet) {
-			NilcordPremain.LOGGER.info("Chat Message: \""+packet.message+"\" from "+netServerHandler.playerEntity.username);
+			NilcordPremain.listener.playerChatMessage(netServerHandler.playerEntity, packet.message);
 		}
 	}
 }

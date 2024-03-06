@@ -21,8 +21,7 @@ public class MinecraftServerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void serverStop() {
-			NilcordPremain.LOGGER.info("Server stopping!");
-			NilcordPremain.server = null;
+			NilcordPremain.listener.serverStop();
 		}
 	}
 }

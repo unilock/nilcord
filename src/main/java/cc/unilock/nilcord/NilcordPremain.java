@@ -7,14 +7,13 @@ import cc.unilock.nilcord.transformer.EntityServerPlayerTransformer;
 import cc.unilock.nilcord.transformer.MinecraftServerTransformer;
 import cc.unilock.nilcord.transformer.NetServerHandlerTransformer;
 import cc.unilock.nilcord.transformer.ServerConfigurationManagerTransformer;
-import net.minecraft.server.MinecraftServer;
 import nilloader.api.ClassTransformer;
 import nilloader.api.ModRemapper;
 import nilloader.api.NilLogger;
 
 public class NilcordPremain implements Runnable {
 	public static final NilLogger LOGGER = NilLogger.get("Nilcord");
-	public static MinecraftServer server = null;
+	public static EventListener listener;
 
 	@Override
 	public void run() {

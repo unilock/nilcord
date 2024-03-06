@@ -2,6 +2,7 @@ package cc.unilock.nilcord.transformer;
 
 import cc.unilock.nilcord.NilcordPremain;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityServerPlayer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import nilloader.api.lib.mini.MiniTransformer;
@@ -23,9 +24,8 @@ public class EntityPlayerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void achievement(EntityPlayer player, StatBase stat) {
-			if (stat.isAchievement()) {
-				Achievement achievement = (Achievement) stat;
-				NilcordPremain.LOGGER.info(player.username+" has made the achievement "+achievement+" - "+achievement.getDescription());
+			if (stat instanceof Achievement) {
+				NilcordPremain.listener.playerAchievement((EntityServerPlayer) player, (Achievement) stat);
 			}
 		}
 	}
