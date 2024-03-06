@@ -7,4 +7,5 @@
 
 entrypoints {
 	premain: "cc.unilock.nilcord.NilcordPremain";
+	hijack: "cc.unilock.nilcord.NilcordPremain";
 }
