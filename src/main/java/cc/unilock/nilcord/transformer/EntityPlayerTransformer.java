@@ -1,6 +1,8 @@
 package cc.unilock.nilcord.transformer;
 
 import cc.unilock.nilcord.NilcordPremain;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
@@ -13,14 +15,18 @@ public class EntityPlayerTransformer extends MiniTransformer {
 		ctx.jumpToStart();
 
 		ctx.add(
+				ALOAD(0),
 				ALOAD(1),
-				INVOKESTATIC("cc/unilock/nilcord/transformer/EntityPlayerTransformer$Hooks", "achievement", "(Lnet/minecraft/stats/StatBase;)V")
+				INVOKESTATIC("cc/unilock/nilcord/transformer/EntityPlayerTransformer$Hooks", "achievement", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/stats/StatBase;)V")
 		);
 	}
 
 	public static class Hooks {
-		public static void achievement(StatBase achievement) {
-			NilcordPremain.LOGGER.info("Achievement: "+achievement.toString());
+		public static void achievement(EntityPlayer player, StatBase stat) {
+			if (stat.isAchievement()) {
+				Achievement achievement = (Achievement) stat;
+				NilcordPremain.LOGGER.info(player.username+" has made the achievement "+achievement+" - "+achievement.getDescription());
+			}
 		}
 	}
 }

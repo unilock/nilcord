@@ -22,7 +22,7 @@ public class EntityServerPlayerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void death(EntityServerPlayer player, DamageSource source) {
-			NilcordPremain.LOGGER.info("Death Message: "+source.getDeathMessage(player));
+			NilcordPremain.LOGGER.info(player.username+" died: "+source.getDeathMessage(player));
 		}
 	}
 }
