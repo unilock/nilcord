@@ -1,5 +1,6 @@
 package cc.unilock.nilcord;
 
+import cc.unilock.nilcord.transformer.ClassReaderTransformer;
 import cc.unilock.nilcord.transformer.EntityPlayerTransformer;
 import cc.unilock.nilcord.transformer.EntityServerPlayerTransformer;
 import cc.unilock.nilcord.transformer.NetServerHandlerTransformer;
@@ -13,6 +14,8 @@ public class NilcordPremain implements Runnable {
 	@Override
 	public void run() {
 		ModRemapper.setTargetMapping("default");
+
+		ClassTransformer.register(new ClassReaderTransformer());
 
 		ClassTransformer.register(new EntityPlayerTransformer());
 		ClassTransformer.register(new EntityServerPlayerTransformer());
