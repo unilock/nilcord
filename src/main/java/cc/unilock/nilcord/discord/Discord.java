@@ -92,13 +92,11 @@ public class Discord extends ListenerAdapter {
             Message refMessage = ref.getMessage() == null ? ref.resolve().complete() : ref.getMessage();
             User refAuthor = refMessage.getAuthor();
             Member refMember = refMessage.getMember();
-            if (refMember != null) {
-                reply_chunk = CONFIG.formatting.minecraft.reply_format.value()
-                        .replace("<reply_username>", refAuthor.getName())
-                        .replace("<reply_nickname>", refMember.getEffectiveName())
-                        .replace("<reply_message>", refMessage.getContentDisplay())
-                        .replace("<reply_url>", refMessage.getJumpUrl());
-            }
+            reply_chunk = CONFIG.formatting.minecraft.reply_format.value()
+                    .replace("<reply_username>", refAuthor.getName())
+                    .replace("<reply_nickname>", refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName())
+                    .replace("<reply_message>", refMessage.getContentDisplay())
+                    .replace("<reply_url>", refMessage.getJumpUrl());
         }
 
         String msg = CONFIG.formatting.minecraft.discord_message.value()
