@@ -2,40 +2,70 @@ package cc.unilock.nilcord;
 
 import net.minecraft.entity.player.EntityServerPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Translate;
 
-public class EventListener {
-    private MinecraftServer server = null;
+import java.time.Duration;
 
+import static cc.unilock.nilcord.NilcordPremain.CONFIG;
+import static cc.unilock.nilcord.NilcordPremain.LOGGER;
+
+public class EventListener {
     public void serverStart() {
-        NilcordPremain.LOGGER.info("Server started!");
-        this.server = MinecraftServer.getServer();
+        NilcordPremain.server = (DedicatedServer) MinecraftServer.getServer();
+        try {
+            NilcordPremain.discord.getJda().awaitReady();
+            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
     }
 
     public void serverStop() {
-        NilcordPremain.LOGGER.info("Server stopping!");
-        this.server = null;
+        try {
+            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
+            NilcordPremain.discord.shutdown();
+            NilcordPremain.discord.getJda().awaitShutdown(Duration.ofMillis(500));
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
+        NilcordPremain.server = null;
     }
 
     public void playerChatMessage(EntityServerPlayer player, String message) {
-        NilcordPremain.LOGGER.info("Chat Message: \""+message+"\" from "+player.username);
+        NilcordPremain.discord.onPlayerChatMessage(player, message);
     }
 
     public void playerJoin(EntityServerPlayer player) {
-        NilcordPremain.LOGGER.info(player.username+" joined the game");
+        String message = CONFIG.formatting.discord.join_message.value()
+                .replace("<username>", player.username);
+        NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
     public void playerLeave(EntityServerPlayer player) {
-        NilcordPremain.LOGGER.info(player.username+" left the game");
+        String message = CONFIG.formatting.discord.leave_message.value()
+                .replace("<username>", player.username);
+        NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
     public void playerAchievement(EntityServerPlayer player, Achievement achievement) {
-        NilcordPremain.LOGGER.info(player.username+" has made the achievement "+Translate.format(achievement.statName)+" - "+Translate.format(achievement.achievementDescription));
+        // So, bad news! Statistics aren't server-side in 1.4.7 LOL
+
+        /*
+        String message = CONFIG.formatting.discord.achievement_message.value()
+                .replace("<username>", player.username)
+                .replace("<achievement_title>", Translate.format(achievement.statName))
+                .replace("<achievement_description>", Translate.format(achievement.achievementDescription));
+        NilcordPremain.discord.sendMessageToDiscord(message);
+         */
     }
 
     public void playerDeath(EntityServerPlayer player, DamageSource source) {
-        NilcordPremain.LOGGER.info(player.username+" died: "+source.getDeathMessage(player));
+        String message = CONFIG.formatting.discord.death_message.value()
+                .replace("<username>", player.username)
+                .replace("<death_message>", Translate.format(source.getDeathMessage(player)));
+        NilcordPremain.discord.sendMessageToDiscord(message);
     }
 }

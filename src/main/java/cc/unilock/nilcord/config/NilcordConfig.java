@@ -4,36 +4,24 @@ import folk.sisby.kaleido.api.ReflectiveConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 
-import java.nio.file.Paths;
-
 public class NilcordConfig extends ReflectiveConfig {
-    public static final NilcordConfig INSTANCE = NilcordConfig.createToml(Paths.get("config"), "", "nilcord", NilcordConfig.class);
-
     @Comment("Settings pertaining to Discord itself")
     public final Discord discord = new Discord();
     public static final class Discord extends Section {
         @Comment("The Discord bot token to use")
-        public final TrackedValue<String> bot_token = value("EMPTY");
+        public final TrackedValue<String> token = value("EMPTY");
 
         @Comment("The Discord channel ID for the bot to send messages to / receive messages from")
-        public final TrackedValue<String> bot_channel = value("EMPTY");
+        public final TrackedValue<String> channel_id = value("EMPTY");
 
         @Comment("Settings pertaining to the Discord webhook")
         public final Webhook webhook = new Webhook();
         public static final class Webhook extends Section {
             @Comment("Whether to use a webhook for sending players' chat messages to Discord")
-            public final TrackedValue<Boolean> webhook_enabled = value(Boolean.FALSE);
+            public final TrackedValue<Boolean> enabled = value(Boolean.FALSE);
 
             @Comment("The webhook URL to use")
-            public final TrackedValue<String> webhook_url = value("EMPTY");
-
-            @Comment("The URL to use for the webhook's avatar")
-            @Comment("Available placeholders: <username> <uuid>")
-            public final TrackedValue<String> webhook_avatar_url = value("https://visage.surgeplay.com/bust/128/<uuid>");
-
-            @Comment("The webhook's username")
-            @Comment("Available placeholders: <username>")
-            public final TrackedValue<String> webhook_username = value("<username>");
+            public final TrackedValue<String> url = value("EMPTY");
         }
     }
 
@@ -50,7 +38,7 @@ public class NilcordConfig extends ReflectiveConfig {
         public final TrackedValue<Boolean> show_attachments = value(Boolean.TRUE);
 
         @Comment("Whether to show messages from other Discord bots in-game")
-        public final TrackedValue<Boolean> show_bot_message = value(Boolean.FALSE);
+        public final TrackedValue<Boolean> show_bot_messages = value(Boolean.FALSE);
     }
 
     @Comment("Settings pertaining to message formatting")
@@ -82,11 +70,27 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Player achievement messages")
             @Comment("Additional placeholders: <achievement_description> <achievement_title>")
-            public final TrackedValue<String> achievement_message = value("**<username>** has just earned the achievement **[<achievement_title>]**\\n> \\\\> _<achievement_description>_");
+            public final TrackedValue<String> achievement_message = value("**<username>** has just earned the achievement **[<achievement_title>]**\n> \\> _<achievement_description>_");
 
             @Comment("Player death messages")
             @Comment("Additional placeholders: <death_message>")
             public final TrackedValue<String> death_message = value("**<username> died:** _<death_message>_");
+
+            @Comment("Settings pertaining to messages sent from the webhook, if enabled")
+            public final WebhookFormatting webhook = new WebhookFormatting();
+            public static final class WebhookFormatting extends Section {
+                @Comment("The URL to use for the webhook's avatar")
+                @Comment("Additional placeholders: N/A")
+                public final TrackedValue<String> avatar_url = value("https://visage.surgeplay.com/bust/128/<username>");
+
+                @Comment("The webhook's username")
+                @Comment("Additional placeholders: N/A")
+                public final TrackedValue<String> username = value("<username>");
+
+                @Comment("Player chat messages")
+                @Comment("Additional placeholders: <message>")
+                public final TrackedValue<String> chat_message = value("<message>");
+            }
         }
 
         @Comment("Settings pertaining to messages visible in Minecraft")
