@@ -69,6 +69,7 @@ public class Discord extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (!event.isFromType(ChannelType.TEXT)) return;
+        if (!event.getChannel().asTextChannel().getId().equals(CONFIG.discord.channel_id.value())) return;
 
         User author = event.getAuthor();
         if (!CONFIG.minecraft.show_bot_messages.value() && author.isBot()) return;
