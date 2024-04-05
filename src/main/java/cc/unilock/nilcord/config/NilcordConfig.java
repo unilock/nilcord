@@ -45,7 +45,7 @@ public class NilcordConfig extends ReflectiveConfig {
     public final Formatting formatting = new Formatting();
     public static final class Formatting extends Section {
         @Comment("Settings pertaining to messages visible in Discord")
-        @Comment("Available placeholders: <username>")
+        @Comment("Available placeholders: <displayname> <username>")
         public final DiscordFormatting discord = new DiscordFormatting();
         public static final class DiscordFormatting extends Section {
             @Comment("Server start message")
@@ -80,8 +80,8 @@ public class NilcordConfig extends ReflectiveConfig {
             public final WebhookFormatting webhook = new WebhookFormatting();
             public static final class WebhookFormatting extends Section {
                 @Comment("The URL to use for the webhook's avatar")
-                @Comment("Additional placeholders: N/A")
-                public final TrackedValue<String> avatar_url = value("https://visage.surgeplay.com/bust/128/<username>");
+                @Comment("Additional placeholders: <uuid>")
+                public final TrackedValue<String> avatar_url = value("https://visage.surgeplay.com/bust/128/<uuid>");
 
                 @Comment("The webhook's username")
                 @Comment("Additional placeholders: N/A")

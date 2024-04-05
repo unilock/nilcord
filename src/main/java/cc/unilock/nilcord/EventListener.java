@@ -42,13 +42,15 @@ public class EventListener {
 
     public void playerJoin(EntityPlayerMP player) {
         String message = CONFIG.formatting.discord.join_message.value()
-                .replace("<username>", player.getCommandSenderName());
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
     public void playerLeave(EntityPlayerMP player) {
         String message = CONFIG.formatting.discord.leave_message.value()
-                .replace("<username>", player.getCommandSenderName());
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
@@ -58,7 +60,8 @@ public class EventListener {
             && player.mcServer.func_147136_ar()
         ) {
             String message = CONFIG.formatting.discord.achievement_message.value()
-                .replace("<username>", player.getCommandSenderName())
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName())
                 .replace("<achievement_title>", ((StatBaseAccessor) achievement).getStatName().getUnformattedTextForChat())
                 .replace(
                     "<achievement_description>",
@@ -72,7 +75,8 @@ public class EventListener {
 
     public void playerDeath(EntityPlayerMP player, DamageSource source) {
         String message = CONFIG.formatting.discord.death_message.value()
-                .replace("<username>", player.getCommandSenderName())
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName())
                 .replace("<death_message>", source.func_151519_b(player).getUnformattedTextForChat());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
