@@ -1,8 +1,8 @@
 package cc.unilock.nilcord;
 
 import cc.unilock.nilcord.util.TextUtils;
-import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -53,8 +53,8 @@ public class EventListener {
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerAdvancement(ServerPlayerEntity player, Advancement advancement) {
-        AdvancementDisplay display = advancement.getDisplay();
+    public void playerAdvancement(ServerPlayerEntity player, AdvancementEntry advancement) {
+        AdvancementDisplay display = advancement.value().display().orElse(null);
 
         if (player.getAdvancementTracker().getProgress(advancement).isDone()
                 && display != null

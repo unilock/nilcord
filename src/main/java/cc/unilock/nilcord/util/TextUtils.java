@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class TextUtils {
@@ -20,7 +21,7 @@ public class TextUtils {
 
     public static Text parsePlayer(String template, ServerPlayerEntity player) {
         Map<String, Text> placeholders = Map.of(
-                "displayname", player.getDisplayName(),
+                "displayname", Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().getName())),
                 "username", Text.literal(player.getGameProfile().getName()),
                 "uuid", Text.literal(player.getGameProfile().getId().toString())
         );
