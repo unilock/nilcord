@@ -68,9 +68,9 @@ public class NilcordConfig extends ReflectiveConfig {
             @Comment("Additional placeholders: N/A")
             public final TrackedValue<String> leave_message = value("> **<username> left the game**");
 
-            @Comment("Player achievement messages")
-            @Comment("Additional placeholders: <achievement_description> <achievement_title>")
-            public final TrackedValue<String> achievement_message = value("> **<username>** has just earned the achievement **[<achievement_title>]**\n> \\> _<achievement_description>_");
+            @Comment("Player advancement messages")
+            @Comment("Additional placeholders: <advancement_description> <advancement_title>")
+            public final TrackedValue<String> advancement_message = value("> **<username>** has made the advancement **[<advancement_title>]**\n> \\> _<advancement_description>_");
 
             @Comment("Player death messages")
             @Comment("Additional placeholders: <death_message>")

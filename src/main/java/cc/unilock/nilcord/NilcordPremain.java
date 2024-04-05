@@ -2,47 +2,53 @@ package cc.unilock.nilcord;
 
 import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
-import cc.unilock.nilcord.transformer.ClassReaderTransformer;
-import cc.unilock.nilcord.transformer.DedicatedServerTransformer;
-import cc.unilock.nilcord.transformer.EntityPlayerTransformer;
-import cc.unilock.nilcord.transformer.EntityServerPlayerTransformer;
-import cc.unilock.nilcord.transformer.MinecraftServerTransformer;
-import cc.unilock.nilcord.transformer.NetServerHandlerTransformer;
-import cc.unilock.nilcord.transformer.ServerConfigurationManagerTransformer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import nilloader.api.ClassTransformer;
-import nilloader.api.ModRemapper;
-import nilloader.api.NilLogger;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.nio.file.Paths;
+public class NilcordPremain implements ModInitializer {
+    public static final Logger LOGGER = LoggerFactory.getLogger("nilcord");
+    public static final NilcordConfig CONFIG = NilcordConfig.createToml(FabricLoader.getInstance().getConfigDir(), "", "nilcord", NilcordConfig.class);
+    public static Discord discord;
+    public static EventListener listener;
+    public static MinecraftServer server;
 
-public class NilcordPremain implements Runnable {
-	public static final NilLogger LOGGER = NilLogger.get("Nilcord");
-	public static final NilcordConfig CONFIG = NilcordConfig.createToml(Paths.get("config"), "", "nilcord", NilcordConfig.class);
-	public static Discord discord;
-	public static EventListener listener;
-	public static DedicatedServer server;
+    @Override
+    public void onInitialize() {
+        discord = new Discord();
+        listener = new EventListener();
 
-	@Override
-	public void run() {
-		ModRemapper.setTargetMapping("default");
+        // Server starting / stopping events
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            NilcordPremain.server = server;
+            listener.serverStart();
+        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            listener.serverStop();
+            NilcordPremain.server = null;
+        });
 
-		// Required for Forge compatibility
-		ClassTransformer.register(new ClassReaderTransformer());
-
-		// Server starting / stopping events
-		ClassTransformer.register(new DedicatedServerTransformer());
-		ClassTransformer.register(new MinecraftServerTransformer());
-
-		// Player events
-		ClassTransformer.register(new EntityPlayerTransformer());
-		ClassTransformer.register(new EntityServerPlayerTransformer());
-		ClassTransformer.register(new NetServerHandlerTransformer());
-		ClassTransformer.register(new ServerConfigurationManagerTransformer());
-	}
-
-	public static void initialize() {
-		discord = new Discord();
-		listener = new EventListener();
-	}
+        // Player events
+        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> {
+            listener.playerChatMessage(sender, message.getContent().getString());
+        });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            listener.playerJoin(handler.getPlayer());
+        });
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            listener.playerLeave(handler.getPlayer());
+        });
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
+            if (entity instanceof ServerPlayerEntity spe) {
+                listener.playerDeath(spe, damageSource);
+            }
+        });
+    }
 }

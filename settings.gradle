@@ -1,12 +1,10 @@
 pluginManagement {
 	repositories {
-		gradlePluginPortal()
-		mavenCentral()
 		maven {
-			url 'https://repo.sleeping.town'
-			content {
-				includeGroup 'com.unascribed.nilgradle'
-			}
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
 		}
+		mavenCentral()
+		gradlePluginPortal()
 	}
 }

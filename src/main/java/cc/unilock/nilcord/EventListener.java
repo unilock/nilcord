@@ -1,11 +1,10 @@
 package cc.unilock.nilcord;
 
-import net.minecraft.entity.player.EntityServerPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.stats.Achievement;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Translate;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementDisplay;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.GameRules;
 
 import java.time.Duration;
 
@@ -14,7 +13,6 @@ import static cc.unilock.nilcord.NilcordPremain.LOGGER;
 
 public class EventListener {
     public void serverStart() {
-        NilcordPremain.server = (DedicatedServer) MinecraftServer.getServer();
         try {
             NilcordPremain.discord.getJda().awaitReady();
             NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
@@ -31,41 +29,55 @@ public class EventListener {
         } catch (InterruptedException e) {
             LOGGER.error(e.toString());
         }
-        NilcordPremain.server = null;
     }
 
-    public void playerChatMessage(EntityServerPlayer player, String message) {
+    public void playerChatMessage(ServerPlayerEntity player, String message) {
         NilcordPremain.discord.onPlayerChatMessage(player, message);
     }
 
-    public void playerJoin(EntityServerPlayer player) {
+    public void playerJoin(ServerPlayerEntity player) {
         String message = CONFIG.formatting.discord.join_message.value()
-                .replace("<username>", player.username);
+                .replace("<username>", player.getGameProfile().getName());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerLeave(EntityServerPlayer player) {
+    public void playerLeave(ServerPlayerEntity player) {
         String message = CONFIG.formatting.discord.leave_message.value()
-                .replace("<username>", player.username);
+                .replace("<username>", player.getGameProfile().getName());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerAchievement(EntityServerPlayer player, Achievement achievement) {
-        // So, bad news! Statistics aren't server-side in 1.4.7 LOL
+    public void playerAdvancement(ServerPlayerEntity player, Advancement advancement) {
+        AdvancementDisplay display = advancement.getDisplay();
 
-        /*
-        String message = CONFIG.formatting.discord.achievement_message.value()
-                .replace("<username>", player.username)
-                .replace("<achievement_title>", Translate.format(achievement.statName))
-                .replace("<achievement_description>", Translate.format(achievement.achievementDescription));
-        NilcordPremain.discord.sendMessageToDiscord(message);
-         */
+        if (player.getAdvancementTracker().getProgress(advancement).isDone()
+                && display != null
+                && display.shouldAnnounceToChat()
+                && player.getWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)
+        ) {
+            String username = player.getGameProfile().getName();
+            String title = display.getTitle().getString();
+            String description = display.getDescription().getString();
+
+//            String advType = switch (display.getFrame()) {
+//                case CHALLENGE -> YEP_ADV_CHALLENGE;
+//                case GOAL -> YEP_ADV_GOAL;
+//                case TASK -> YEP_ADV_TASK;
+//                default -> YEP_ADV_DEFAULT;
+//            };
+
+            String message = CONFIG.formatting.discord.advancement_message.value()
+                    .replace("<username>", username)
+                    .replace("<advancement_title>", title)
+                    .replace("<advancement_description>", description);
+            NilcordPremain.discord.sendMessageToDiscord(message);
+        }
     }
 
-    public void playerDeath(EntityServerPlayer player, DamageSource source) {
+    public void playerDeath(ServerPlayerEntity player, DamageSource source) {
         String message = CONFIG.formatting.discord.death_message.value()
-                .replace("<username>", player.username)
-                .replace("<death_message>", Translate.format(source.getDeathMessage(player)));
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<death_message>", source.getDeathMessage(player).getString());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 }
