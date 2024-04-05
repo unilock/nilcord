@@ -70,7 +70,10 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Player advancement messages")
             @Comment("Additional placeholders: <advancement_description> <advancement_title>")
-            public final TrackedValue<String> advancement_message = value("> **<username>** has made the advancement **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_fallback_message = value("> **<username>** has just earned the achievement **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_challenge_message = value("> **<username>** has completed the challenge **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_goal_message = value("> **<username>** has reached the goal **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_task_message = value("> **<username>** has made the advancement **[<advancement_title>]**\n> \\> _<advancement_description>_");
 
             @Comment("Player death messages")
             @Comment("Additional placeholders: <death_message>")

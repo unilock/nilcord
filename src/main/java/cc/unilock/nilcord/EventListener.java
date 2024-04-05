@@ -61,14 +61,14 @@ public class EventListener {
             String title = display.getTitle().getString();
             String description = display.getDescription().getString();
 
-//            String advType = switch (display.getFrame()) {
-//                case CHALLENGE -> YEP_ADV_CHALLENGE;
-//                case GOAL -> YEP_ADV_GOAL;
-//                case TASK -> YEP_ADV_TASK;
-//                default -> YEP_ADV_DEFAULT;
-//            };
+            String template = switch (display.getFrame()) {
+                case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
+                case GOAL -> CONFIG.formatting.discord.advancement_goal_message.value();
+                case TASK -> CONFIG.formatting.discord.advancement_task_message.value();
+                default -> CONFIG.formatting.discord.advancement_fallback_message.value();
+            };
 
-            String message = CONFIG.formatting.discord.advancement_message.value()
+            String message = template
                     .replace("<username>", username)
                     .replace("<displayname>", player.getDisplayName().getString())
                     .replace("<advancement_title>", title)
