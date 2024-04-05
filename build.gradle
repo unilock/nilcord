@@ -11,6 +11,7 @@ base {
 }
 
 repositories {
+	maven { url 'https://maven.nucleoid.xyz/' }
 	maven { url 'https://repo.sleeping.town/' }
 	mavenCentral()
 }
@@ -29,6 +30,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation include("eu.pb4:placeholder-api:${project.papi_version}")
 
 	implementation include("net.dv8tion:JDA:${project.jda_version}") {
 		exclude module: 'opus-java'
