@@ -37,13 +37,15 @@ public class EventListener {
 
     public void playerJoin(ServerPlayerEntity player) {
         String message = CONFIG.formatting.discord.join_message.value()
-                .replace("<username>", player.getGameProfile().getName());
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName().getString());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
     public void playerLeave(ServerPlayerEntity player) {
         String message = CONFIG.formatting.discord.leave_message.value()
-                .replace("<username>", player.getGameProfile().getName());
+                .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName().getString());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
@@ -68,6 +70,7 @@ public class EventListener {
 
             String message = CONFIG.formatting.discord.advancement_message.value()
                     .replace("<username>", username)
+                    .replace("<displayname>", player.getDisplayName().getString())
                     .replace("<advancement_title>", title)
                     .replace("<advancement_description>", description);
             NilcordPremain.discord.sendMessageToDiscord(message);
@@ -77,6 +80,7 @@ public class EventListener {
     public void playerDeath(ServerPlayerEntity player, DamageSource source) {
         String message = CONFIG.formatting.discord.death_message.value()
                 .replace("<username>", player.getGameProfile().getName())
+                .replace("<displayname>", player.getDisplayName().getString())
                 .replace("<death_message>", source.getDeathMessage(player).getString());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
