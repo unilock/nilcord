@@ -25,7 +25,7 @@ public class EventListener {
         try {
             NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
             NilcordPremain.discord.shutdown();
-            NilcordPremain.discord.getJda().awaitShutdown(Duration.ofMillis(500));
+            NilcordPremain.discord.getJda().awaitShutdown(Duration.ofSeconds(3));
         } catch (InterruptedException e) {
             LOGGER.error(e.toString());
         }
