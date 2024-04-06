@@ -25,14 +25,14 @@ public class TextUtils {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
-                .replace("<username>", author.getName())
-                .replace("<nickname>", member.getEffectiveName())
                 .replace("<role_color>", ColorUtils.getHexColor(member))
-                .replace("<message>", message.getContentDisplay())
                 .replace("<message_url>", message.getJumpUrl());
 
         Map<String, Text> placeholders = Map.of(
-                "reply_format", replyChunk
+                "reply_format", replyChunk,
+                "username", Text.literal(author.getName()),
+                "nickname", Text.literal(member.getEffectiveName()),
+                "message", Text.literal(message.getContentDisplay())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
@@ -43,13 +43,16 @@ public class TextUtils {
         Member refMember = refMessage.getMember();
 
         template = template
-                .replace("<reply_username>", refAuthor.getName())
-                .replace("<reply_nickname>", refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName())
                 .replace("<reply_role_color>", refMember == null ? ColorUtils.WHITE : ColorUtils.getHexColor(refMember))
-                .replace("<reply_message>", refMessage.getContentDisplay())
                 .replace("<reply_url>", refMessage.getJumpUrl());
 
-        return parse(template);
+        Map<String, Text> placeholders = Map.of(
+                "reply_username", Text.literal(refAuthor.getName()),
+                "reply_nickname", Text.literal(refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName()),
+                "reply_message", Text.literal(refMessage.getContentDisplay())
+        );
+
+        return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
     }
 
     public static Text parsePlayer(String template, ServerPlayerEntity player) {
