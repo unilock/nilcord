@@ -99,11 +99,11 @@ public class NilcordConfig extends ReflectiveConfig {
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
             @Comment("Additional placeholders: <attachment_format> <discord_format> <reply_format> <username_format>")
-            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><username_format> <message><attachment_format>");
+            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><<username_format>> <message><attachment_format>");
 
             @Comment("Username format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> username_format = value("<<nickname>>");
+            public final TrackedValue<String> username_format = value("<nickname>");
 
             @Comment("Mention format")
             @Comment("Additional placeholders: N/A")
@@ -111,7 +111,7 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Reply format")
             @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_url> <reply_username>")
-            public final TrackedValue<String> reply_format = value("[§b←§r<reply_nickname] ");
+            public final TrackedValue<String> reply_format = value("[§b←§r<reply_nickname>] ");
 
             @Comment("Attachment format")
             @Comment("Additional placeholders: <attachment_url>")
