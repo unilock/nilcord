@@ -102,23 +102,23 @@ public class NilcordConfig extends ReflectiveConfig {
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
             @Comment("Additional placeholders: <attachment_format> <discord_format> <reply_format> <username_format>")
-            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><username_format> <message><attachment_format>");
+            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><<username_format>> <message><attachment_format>");
 
             @Comment("Username format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> username_format = value("<<nickname>>");
+            public final TrackedValue<String> username_format = value("<hover:show_text:'@<username>'><nickname></hover>");
 
             @Comment("Mention format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> mention_format = value("§n@<nickname>§r");
+            public final TrackedValue<String> mention_format = value("<underline><hover:show_text:'@<username>'>@<nickname></hover></underline>");
 
             @Comment("Reply format")
             @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_url> <reply_username>")
-            public final TrackedValue<String> reply_format = value("[§b←§r<reply_nickname] ");
+            public final TrackedValue<String> reply_format = value("<click:open_url:'<reply_url>'><hover:show_text:'@<reply_username>: <reply_message>'>[<aqua>←</aqua><reply_nickname>]</hover></click> ");
 
             @Comment("Attachment format")
             @Comment("Additional placeholders: <attachment_url>")
-            public final TrackedValue<String> attachment_format = value("[ §bAttachment: §n<attachment_url>§r ]");
+            public final TrackedValue<String> attachment_format = value("<click:open_url:'<attachment_url>'>[<aqua>Attachment</aqua>]</click>");
         }
     }
 }
