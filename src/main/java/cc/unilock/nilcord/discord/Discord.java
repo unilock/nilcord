@@ -103,8 +103,8 @@ public class Discord extends ListenerAdapter {
                 attachment_chunk.toString(),
                 reply_chunk,
                 CONFIG.formatting.minecraft.username_format.value(),
-                author.getName(),
-                member.getEffectiveName(),
+                author,
+                member,
                 message.getContentDisplay()
         );
 
