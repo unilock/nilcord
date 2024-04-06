@@ -108,7 +108,6 @@ public class Discord extends ListenerAdapter {
                 message
         );
 
-        server.sendMessage(msg);
         server.getPlayerManager().broadcast(msg, false);
     }
 
