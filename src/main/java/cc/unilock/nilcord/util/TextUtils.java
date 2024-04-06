@@ -3,6 +3,9 @@ package cc.unilock.nilcord.util;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,6 +19,34 @@ public class TextUtils {
 
     private static Text parse(String str) {
         return TextParserUtils.formatText(str);
+    }
+
+    public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, String username, String nickname, String message) {
+        template = template
+                .replace("<attachment_format>", attachmentChunk)
+                .replace("<username_format>", usernameChunk)
+                .replace("<username>", username)
+                .replace("<nickname>", nickname)
+                .replace("<message>", message);
+
+        Map<String, Text> placeholders = Map.of(
+                "reply_format", replyChunk
+        );
+
+        return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
+    }
+
+    public static Text parseDiscordReply(String template, Message refMessage) {
+        User refAuthor = refMessage.getAuthor();
+        Member refMember = refMessage.getMember();
+
+        template = template
+                .replace("<reply_username>", refAuthor.getName())
+                .replace("<reply_nickname>", refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName())
+                .replace("<reply_message>", refMessage.getContentDisplay())
+                .replace("<reply_url>", refMessage.getJumpUrl());
+
+        return parse(template);
     }
 
     public static Text parsePlayer(String template, ServerPlayerEntity player) {
