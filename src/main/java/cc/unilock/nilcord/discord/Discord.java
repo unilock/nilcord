@@ -105,7 +105,7 @@ public class Discord extends ListenerAdapter {
                 CONFIG.formatting.minecraft.username_format.value(),
                 author,
                 member,
-                message.getContentDisplay()
+                message
         );
 
         server.sendMessage(msg);

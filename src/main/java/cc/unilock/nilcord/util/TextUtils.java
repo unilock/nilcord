@@ -22,14 +22,15 @@ public class TextUtils {
         return TextParserUtils.formatText(str);
     }
 
-    public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, User author, Member member, String message) {
+    public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, User author, Member member, Message message) {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
                 .replace("<username>", author.getName())
                 .replace("<nickname>", member.getEffectiveName())
                 .replace("<role_color>", ColorUtils.getHexColor(member))
-                .replace("<message>", message);
+                .replace("<message>", message.getContentDisplay())
+                .replace("<message_url>", message.getJumpUrl());
 
         Map<String, Text> placeholders = Map.of(
                 "reply_format", replyChunk

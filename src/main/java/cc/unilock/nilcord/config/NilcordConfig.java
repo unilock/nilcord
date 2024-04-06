@@ -97,12 +97,12 @@ public class NilcordConfig extends ReflectiveConfig {
         }
 
         @Comment("Settings pertaining to messages visible in Minecraft")
-        @Comment("Available placeholders: <message> <nickname> <role_color> <username>")
+        @Comment("Available placeholders: <message> <message_url> <nickname> <role_color> <username>")
         public final MinecraftFormatting minecraft = new MinecraftFormatting();
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
             @Comment("Additional placeholders: <attachment_format> <discord_format> <reply_format> <username_format>")
-            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><<username_format>> <message><attachment_format>");
+            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><click:open_url:'<message_url>'><<username_format>></click> <message><attachment_format>");
 
             @Comment("Username format")
             @Comment("Additional placeholders: N/A")
