@@ -90,29 +90,26 @@ public class Discord extends ListenerAdapter {
             }
         }
 
-        String reply_chunk = "";
+        Text reply_chunk = Text.empty();
         if (ref != null) {
-            Message refMessage = ref.getMessage() == null ? ref.resolve().complete() : ref.getMessage();
-            User refAuthor = refMessage.getAuthor();
-            Member refMember = refMessage.getMember();
-            reply_chunk = CONFIG.formatting.minecraft.reply_format.value()
-                    .replace("<reply_username>", refAuthor.getName())
-                    .replace("<reply_nickname>", refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName())
-                    .replace("<reply_message>", refMessage.getContentDisplay())
-                    .replace("<reply_url>", refMessage.getJumpUrl());
+            reply_chunk = TextUtils.parseDiscordReply(
+                    CONFIG.formatting.minecraft.reply_format.value(),
+                    ref.getMessage() == null ? ref.resolve().complete() : ref.getMessage()
+            );
         }
 
-        String msg = CONFIG.formatting.minecraft.discord_message.value()
-                .replace("<attachment_format>", attachment_chunk.toString())
-                .replace("<reply_format>", reply_chunk)
-                .replace("<username_format>", CONFIG.formatting.minecraft.username_format.value())
+        Text msg = TextUtils.parseDiscordMessage(
+                CONFIG.formatting.minecraft.discord_message.value(),
+                attachment_chunk.toString(),
+                reply_chunk,
+                CONFIG.formatting.minecraft.username_format.value(),
+                author.getName(),
+                member.getEffectiveName(),
+                message.getContentDisplay()
+        );
 
-                .replace("<username>", author.getName())
-                .replace("<nickname>", member.getEffectiveName())
-                .replace("<message>", message.getContentDisplay());
-
-        server.sendMessage(Text.literal(msg));
-        server.getPlayerManager().broadcast(Text.literal(msg), false);
+        server.sendMessage(msg);
+        server.getPlayerManager().broadcast(msg, false);
     }
 
     public void onPlayerChatMessage(ServerPlayerEntity player, Text message) {
