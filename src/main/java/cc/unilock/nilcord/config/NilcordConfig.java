@@ -58,7 +58,7 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Player chat messages")
             @Comment("Additional placeholders: <message>")
-            public final TrackedValue<String> chat_message = value("**<username>** <message>");
+            public final TrackedValue<String> chat_message = value("**<<username>>** <message>");
 
             @Comment("Player join messages")
             @Comment("Additional placeholders: N/A")
