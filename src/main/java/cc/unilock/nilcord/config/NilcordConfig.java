@@ -97,7 +97,7 @@ public class NilcordConfig extends ReflectiveConfig {
         }
 
         @Comment("Settings pertaining to messages visible in Minecraft")
-        @Comment("Available placeholders: <message> <nickname> <username>")
+        @Comment("Available placeholders: <message> <nickname> <role_color> <username>")
         public final MinecraftFormatting minecraft = new MinecraftFormatting();
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
@@ -106,15 +106,15 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Username format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> username_format = value("<hover:show_text:'@<username>'><nickname></hover>");
+            public final TrackedValue<String> username_format = value("<hover:show_text:'@<username>'><color:'<role_color>'><nickname></color></hover>");
 
             @Comment("Mention format")
             @Comment("Additional placeholders: N/A")
             public final TrackedValue<String> mention_format = value("<underline><hover:show_text:'@<username>'>@<nickname></hover></underline>");
 
             @Comment("Reply format")
-            @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_url> <reply_username>")
-            public final TrackedValue<String> reply_format = value("<click:open_url:'<reply_url>'><hover:show_text:'@<reply_username>: <reply_message>'>[<aqua>←</aqua><reply_nickname>]</hover></click> ");
+            @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_role_color> <reply_url> <reply_username>")
+            public final TrackedValue<String> reply_format = value("<click:open_url:'<reply_url>'><hover:show_text:'@<reply_username>: <reply_message>'>[<aqua>←</aqua><color:'<reply_role_color>'><reply_nickname></color>]</hover></click> ");
 
             @Comment("Attachment format")
             @Comment("Additional placeholders: <attachment_url>")

@@ -21,12 +21,13 @@ public class TextUtils {
         return TextParserUtils.formatText(str);
     }
 
-    public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, String username, String nickname, String message) {
+    public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, User author, Member member, String message) {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
-                .replace("<username>", username)
-                .replace("<nickname>", nickname)
+                .replace("<username>", author.getName())
+                .replace("<nickname>", member.getEffectiveName())
+                .replace("<role_color>", ColorUtils.getHexColor(member))
                 .replace("<message>", message);
 
         Map<String, Text> placeholders = Map.of(
@@ -43,6 +44,7 @@ public class TextUtils {
         template = template
                 .replace("<reply_username>", refAuthor.getName())
                 .replace("<reply_nickname>", refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName())
+                .replace("<reply_role_color>", refMember == null ? ColorUtils.WHITE : ColorUtils.getHexColor(refMember))
                 .replace("<reply_message>", refMessage.getContentDisplay())
                 .replace("<reply_url>", refMessage.getJumpUrl());
 
