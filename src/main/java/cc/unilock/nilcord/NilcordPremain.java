@@ -30,7 +30,7 @@ public class NilcordPremain {
 	public static DedicatedServer server;
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
+    public void onInitialization(FMLInitializationEvent event) {
         discord = new Discord();
         listener = new EventListener();
 
@@ -40,18 +40,18 @@ public class NilcordPremain {
         ModCompat.init();
     }
 
-    public static final class FMLEvents {
-        // Server starting / stopping events
-        @SubscribeEvent
-        public void onServerStarted(FMLServerStartedEvent event) {
-            listener.serverStart();
-        }
-        @SubscribeEvent
-        public void onServerStopping(FMLServerStoppingEvent event) {
-            listener.serverStop();
-        }
+    // Server starting / stopping events
+    @Mod.EventHandler
+    public void onServerStarted(FMLServerStartedEvent event) {
+        listener.serverStart();
+    }
+    @Mod.EventHandler
+    public void onServerStopping(FMLServerStoppingEvent event) {
+        listener.serverStop();
+    }
 
-        // Player events
+    // Player events
+    public static final class FMLEvents {
         @SubscribeEvent
         public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
             if (event.player instanceof EntityPlayerMP player) {
@@ -65,9 +65,7 @@ public class NilcordPremain {
             }
         }
     }
-
     public static final class MFEvents {
-        // Player events
         @SubscribeEvent
         public void onServerChat(ServerChatEvent event) {
             listener.playerChatMessage(event.player, event.message);
