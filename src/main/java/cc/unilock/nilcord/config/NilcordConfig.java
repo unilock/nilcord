@@ -94,7 +94,7 @@ public class NilcordConfig extends ReflectiveConfig {
         }
 
         @Comment("Settings pertaining to messages visible in Minecraft")
-        @Comment("Available placeholders: <message> <nickname> <username>")
+        @Comment("Available placeholders: <message> <message_url> <nickname> <username>")
         public final MinecraftFormatting minecraft = new MinecraftFormatting();
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")

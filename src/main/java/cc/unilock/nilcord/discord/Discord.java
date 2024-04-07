@@ -108,7 +108,8 @@ public class Discord extends ListenerAdapter {
 
                 .replace("<username>", author.getName())
                 .replace("<nickname>", member.getEffectiveName())
-                .replace("<message>", message.getContentDisplay());
+                .replace("<message>", message.getContentDisplay())
+                .replace("<message_url>", message.getJumpUrl());
 
         server.getConfigurationManager().sendChatMsg(new ChatComponentText(msg));
     }
