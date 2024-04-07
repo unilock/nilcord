@@ -91,6 +91,32 @@ public class NilcordConfig extends ReflectiveConfig {
                 @Comment("Additional placeholders: <message>")
                 public final TrackedValue<String> chat_message = value("<message>");
             }
+
+            @Comment("Settings pertaining to messages sent from other mods")
+            @Comment("Additional placeholders: N/A")
+            public final CompatFormatting compat = new CompatFormatting();
+            public static final class CompatFormatting extends Section {
+                @Comment("Settings pertaining to messages sent from ChromatiCraft")
+                @Comment("Additional placeholders: <progress_description> <progress_title>")
+                public final ChromatiCraftFormatting chromaticraft = new ChromatiCraftFormatting();
+                public static final class ChromatiCraftFormatting extends Section {
+                    @Comment("COLOR messages")
+                    @Comment("Additional placeholders: N/A")
+                    public final TrackedValue<String> color = value("> **<username>** has learned something new: \"<progress_title>\"");
+                    @Comment("DIMSTRUCT messages")
+                    @Comment("Additional placeholders: N/A")
+                    public final TrackedValue<String> dimstruct = value("> **<username>** has learned something new: \"<progress_title>\"");
+                    @Comment("FRAGMENT messages")
+                    @Comment("Additional placeholders: N/A")
+                    public final TrackedValue<String> fragment = value("> **<username>** has learned something new: *<progress_title>*");
+                    @Comment("PROGRESS messages")
+                    @Comment("Additional placeholders: N/A")
+                    public final TrackedValue<String> progress = value("> **<username>** has learned something new: __<progress_title>__");
+                    @Comment("LEVEL messages")
+                    @Comment("Additional placeholders: N/A")
+                    public final TrackedValue<String> level = value("> **<username>** has learned something new: **<progress_title>**");
+                }
+            }
         }
 
         @Comment("Settings pertaining to messages visible in Minecraft")
