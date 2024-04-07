@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,7 +111,7 @@ public class Discord extends ListenerAdapter {
                 .replace("<message>", message.getContentDisplay())
                 .replace("<message_url>", message.getJumpUrl());
 
-        server.getConfigurationManager().sendChatMsg(new ChatComponentText(msg));
+        server.getConfigurationManager().sendChatMsg(ForgeHooks.newChatWithLinks(msg));
     }
 
     public void onPlayerChatMessage(EntityPlayerMP player, String message) {
