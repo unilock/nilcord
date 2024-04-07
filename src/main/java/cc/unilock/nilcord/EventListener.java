@@ -1,11 +1,13 @@
 package cc.unilock.nilcord;
 
-import net.minecraft.entity.player.EntityServerPlayer;
+import cc.unilock.nilcord.mixin.accessor.AchievementAccessor;
+import cc.unilock.nilcord.mixin.accessor.StatBaseAccessor;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Translate;
+import net.minecraft.util.StatCollector;
 
 import java.time.Duration;
 
@@ -34,38 +36,44 @@ public class EventListener {
         NilcordPremain.server = null;
     }
 
-    public void playerChatMessage(EntityServerPlayer player, String message) {
+    public void playerChatMessage(EntityPlayerMP player, String message) {
         NilcordPremain.discord.onPlayerChatMessage(player, message);
     }
 
-    public void playerJoin(EntityServerPlayer player) {
+    public void playerJoin(EntityPlayerMP player) {
         String message = CONFIG.formatting.discord.join_message.value()
-                .replace("<username>", player.username);
+                .replace("<username>", player.getCommandSenderName());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerLeave(EntityServerPlayer player) {
+    public void playerLeave(EntityPlayerMP player) {
         String message = CONFIG.formatting.discord.leave_message.value()
-                .replace("<username>", player.username);
+                .replace("<username>", player.getCommandSenderName());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerAchievement(EntityServerPlayer player, Achievement achievement) {
-        // So, bad news! Statistics aren't server-side in 1.4.7 LOL
-
-        /*
-        String message = CONFIG.formatting.discord.achievement_message.value()
-                .replace("<username>", player.username)
-                .replace("<achievement_title>", Translate.format(achievement.statName))
-                .replace("<achievement_description>", Translate.format(achievement.achievementDescription));
-        NilcordPremain.discord.sendMessageToDiscord(message);
-         */
+    public void playerAchievement(EntityPlayerMP player, Achievement achievement) {
+        if (player.func_147099_x().canUnlockAchievement(achievement)
+            && !player.func_147099_x().hasAchievementUnlocked(achievement)
+            && player.mcServer.func_147136_ar()
+        ) {
+            String message = CONFIG.formatting.discord.achievement_message.value()
+                .replace("<username>", player.getCommandSenderName())
+                .replace("<achievement_title>", ((StatBaseAccessor) achievement).getStatName().getUnformattedTextForChat())
+                .replace(
+                    "<achievement_description>",
+                    achievement.statId.equals("achievement.openInventory")
+                        ? StatCollector.translateToLocal(((AchievementAccessor) achievement).getAchievementDescription()).replace("%1$s", "E")
+                        : StatCollector.translateToLocal(((AchievementAccessor) achievement).getAchievementDescription())
+            );
+            NilcordPremain.discord.sendMessageToDiscord(message);
+        }
     }
 
-    public void playerDeath(EntityServerPlayer player, DamageSource source) {
+    public void playerDeath(EntityPlayerMP player, DamageSource source) {
         String message = CONFIG.formatting.discord.death_message.value()
-                .replace("<username>", player.username)
-                .replace("<death_message>", Translate.format(source.getDeathMessage(player)));
+                .replace("<username>", player.getCommandSenderName())
+                .replace("<death_message>", source.func_151519_b(player).getUnformattedTextForChat());
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 }

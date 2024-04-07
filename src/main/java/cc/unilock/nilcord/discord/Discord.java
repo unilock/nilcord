@@ -18,7 +18,8 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import net.minecraft.entity.player.EntityServerPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,12 +110,12 @@ public class Discord extends ListenerAdapter {
                 .replace("<nickname>", member.getEffectiveName())
                 .replace("<message>", message.getContentDisplay());
 
-        server.getConfigurationManager().sendChatMsg(msg);
+        server.getConfigurationManager().sendChatMsg(new ChatComponentText(msg));
     }
 
-    public void onPlayerChatMessage(EntityServerPlayer player, String message) {
+    public void onPlayerChatMessage(EntityPlayerMP player, String message) {
         String msg = (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value())
-                .replace("<username>", player.username)
+                .replace("<username>", player.getCommandSenderName())
                 .replace("<message>", message);
 
         if (CONFIG.minecraft.enable_everyone_and_here.value()) {
@@ -131,7 +132,7 @@ public class Discord extends ListenerAdapter {
         this.sendMessageToDiscord(message, null);
     }
 
-    public void sendMessageToDiscord(String message, @Nullable EntityServerPlayer player) {
+    public void sendMessageToDiscord(String message, @Nullable EntityPlayerMP player) {
         if (!CONFIG.discord.webhook.enabled.value() || this.webhook == null || player == null) {
             sendBotMessageToDiscord(message);
         } else {
@@ -148,12 +149,12 @@ public class Discord extends ListenerAdapter {
         }
     }
 
-    public void sendWebhookMessageToDiscord(String message, EntityServerPlayer player) {
+    public void sendWebhookMessageToDiscord(String message, EntityPlayerMP player) {
         String avatar = CONFIG.formatting.discord.webhook.avatar_url.value()
-                .replace("<username>", player.username);
+                .replace("<username>", player.getCommandSenderName());
 
         String username = CONFIG.formatting.discord.webhook.username.value()
-                .replace("<username>", player.username);
+                .replace("<username>", player.getCommandSenderName());
 
         try (MessageCreateData data = new MessageCreateBuilder().setContent(message).build()) {
             webhook.sendMessage(data)

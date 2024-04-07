@@ -1,3 +1,3 @@
 # Nilcord
 
-A Discord bridge for Minecraft 1.4.7 using NilLoader.
+A Discord bridge for Minecraft using Forge.
