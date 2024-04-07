@@ -34,49 +34,55 @@ public class NilcordPremain {
         discord = new Discord();
         listener = new EventListener();
 
-        FMLCommonHandler.instance().bus().register(this);
-        MinecraftForge.EVENT_BUS.register(this);
+        FMLCommonHandler.instance().bus().register(new FMLEvents());
+        MinecraftForge.EVENT_BUS.register(new MFEvents());
 
         ModCompat.init();
     }
 
-    // Server starting / stopping events
-    @SubscribeEvent
-    public void onServerStarted(FMLServerStartedEvent event) {
-        listener.serverStart();
-    }
-    @SubscribeEvent
-    public void onServerStopping(FMLServerStoppingEvent event) {
-        listener.serverStop();
+    public static final class FMLEvents {
+        // Server starting / stopping events
+        @SubscribeEvent
+        public void onServerStarted(FMLServerStartedEvent event) {
+            listener.serverStart();
+        }
+        @SubscribeEvent
+        public void onServerStopping(FMLServerStoppingEvent event) {
+            listener.serverStop();
+        }
+
+        // Player events
+        @SubscribeEvent
+        public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+            if (event.player instanceof EntityPlayerMP player) {
+                listener.playerJoin(player);
+            }
+        }
+        @SubscribeEvent
+        public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+            if (event.player instanceof EntityPlayerMP player) {
+                listener.playerLeave(player);
+            }
+        }
     }
 
-    // Player events
-    @SubscribeEvent
-    public void onServerChat(ServerChatEvent event) {
-        listener.playerChatMessage(event.player, event.message);
-    }
-    @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.player instanceof EntityPlayerMP player) {
-            listener.playerJoin(player);
+    public static final class MFEvents {
+        // Player events
+        @SubscribeEvent
+        public void onServerChat(ServerChatEvent event) {
+            listener.playerChatMessage(event.player, event.message);
         }
-    }
-    @SubscribeEvent
-    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.player instanceof EntityPlayerMP player) {
-            listener.playerLeave(player);
+        @SubscribeEvent
+        public void onLivingDeath(LivingDeathEvent event) {
+            if (event.entityLiving instanceof EntityPlayerMP player) {
+                listener.playerDeath(player, event.source);
+            }
         }
-    }
-    @SubscribeEvent
-    public void onLivingDeath(LivingDeathEvent event) {
-        if (event.entityLiving instanceof EntityPlayerMP player) {
-            listener.playerDeath(player, event.source);
-        }
-    }
-    @SubscribeEvent
-    public void onAchievement(AchievementEvent event) {
-        if (event.entityPlayer instanceof EntityPlayerMP player) {
-            listener.playerAchievement(player, event.achievement);
+        @SubscribeEvent
+        public void onAchievement(AchievementEvent event) {
+            if (event.entityPlayer instanceof EntityPlayerMP player) {
+                listener.playerAchievement(player, event.achievement);
+            }
         }
     }
 }
