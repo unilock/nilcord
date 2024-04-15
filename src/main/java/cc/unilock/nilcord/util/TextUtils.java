@@ -1,8 +1,10 @@
 package cc.unilock.nilcord.util;
 
+import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
+import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -33,7 +35,7 @@ public class TextUtils {
                 "reply_format", replyChunk,
                 "username", Text.literal(author.getName()),
                 "nickname", Text.literal(member.getEffectiveName()),
-                "message", Text.literal(message.getContentDisplay())
+                "message", MarkdownLiteParserV1.ALL.parseText(message.getContentDisplay(), ParserContext.of())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
@@ -50,7 +52,7 @@ public class TextUtils {
         Map<String, Text> placeholders = Map.of(
                 "reply_username", Text.literal(refAuthor.getName()),
                 "reply_nickname", Text.literal(refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName()),
-                "reply_message", Text.literal(refMessage.getContentDisplay())
+                "reply_message", MarkdownLiteParserV1.ALL.parseText(refMessage.getContentDisplay(), ParserContext.of())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
