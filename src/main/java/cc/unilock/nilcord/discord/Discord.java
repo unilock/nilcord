@@ -70,6 +70,8 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (CONFIG.formatting.minecraft.discord_message.value().isBlank()) return;
+
         if (!event.isFromType(ChannelType.TEXT)) return;
         if (!event.getChannel().asTextChannel().getId().equals(CONFIG.discord.channel_id.value())) return;
 
