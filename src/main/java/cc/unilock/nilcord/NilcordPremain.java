@@ -1,29 +1,28 @@
 package cc.unilock.nilcord;
 
-import cc.unilock.nilcord.compat.ModCompat;
 import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.AchievementEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.server.FMLServerHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Paths;
 
-@Mod(modid = "nilcord", version = Tags.VERSION, name = "Nilcord",  acceptedMinecraftVersions = "[1.7.10]", acceptableRemoteVersions = "*")
+@Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION, acceptableRemoteVersions = "*")
 public class NilcordPremain {
-    public static final Logger LOGGER = LogManager.getLogger("nilcord");
+    public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_NAME);
 	public static final NilcordConfig CONFIG = NilcordConfig.createToml(Paths.get("config"), "", "nilcord", NilcordConfig.class);
 	public static Discord discord;
 	public static EventListener listener;
@@ -34,20 +33,20 @@ public class NilcordPremain {
         discord = new Discord();
         listener = new EventListener();
 
-        FMLCommonHandler.instance().bus().register(new FMLEvents());
+        MinecraftForge.EVENT_BUS.register(new FMLEvents());
         MinecraftForge.EVENT_BUS.register(new MFEvents());
-
-        ModCompat.init();
     }
 
     // Server starting / stopping events
     @Mod.EventHandler
     public void onServerStarted(FMLServerStartedEvent event) {
+        NilcordPremain.server = (DedicatedServer) FMLServerHandler.instance().getServer();
         listener.serverStart();
     }
     @Mod.EventHandler
     public void onServerStopping(FMLServerStoppingEvent event) {
         listener.serverStop();
+        NilcordPremain.server = null;
     }
 
     // Player events
@@ -68,18 +67,18 @@ public class NilcordPremain {
     public static final class MFEvents {
         @SubscribeEvent
         public void onServerChat(ServerChatEvent event) {
-            listener.playerChatMessage(event.player, event.message);
+            listener.playerChatMessage(event.getPlayer(), event.getComponent());
         }
         @SubscribeEvent
         public void onLivingDeath(LivingDeathEvent event) {
-            if (event.entityLiving instanceof EntityPlayerMP player) {
-                listener.playerDeath(player, event.source);
+            if (event.getEntityLiving() instanceof EntityPlayerMP player) {
+                listener.playerDeath(player, event.getSource());
             }
         }
         @SubscribeEvent
-        public void onAchievement(AchievementEvent event) {
-            if (event.entityPlayer instanceof EntityPlayerMP player) {
-                listener.playerAchievement(player, event.achievement);
+        public void onAchievement(AdvancementEvent event) {
+            if (event.getEntityPlayer() instanceof EntityPlayerMP player) {
+                listener.playerAdvancement(player, event.getAdvancement());
             }
         }
     }

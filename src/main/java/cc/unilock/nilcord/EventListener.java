@@ -1,13 +1,11 @@
 package cc.unilock.nilcord;
 
-import cc.unilock.nilcord.mixin.accessor.AchievementAccessor;
-import cc.unilock.nilcord.mixin.accessor.StatBaseAccessor;
+import cc.unilock.nilcord.util.TextUtils;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.stats.Achievement;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.ITextComponent;
 
 import java.time.Duration;
 
@@ -16,10 +14,11 @@ import static cc.unilock.nilcord.NilcordPremain.LOGGER;
 
 public class EventListener {
     public void serverStart() {
-        NilcordPremain.server = (DedicatedServer) MinecraftServer.getServer();
         try {
             NilcordPremain.discord.getJda().awaitReady();
-            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
+            if (!CONFIG.formatting.discord.server_start_message.value().isEmpty()) {
+                NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
+            }
         } catch (InterruptedException e) {
             LOGGER.error(e.toString());
         }
@@ -27,57 +26,76 @@ public class EventListener {
 
     public void serverStop() {
         try {
-            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
+            if (!CONFIG.formatting.discord.server_stop_message.value().isEmpty()) {
+                NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
+            }
             NilcordPremain.discord.shutdown();
             NilcordPremain.discord.getJda().awaitShutdown(Duration.ofSeconds(3));
         } catch (InterruptedException e) {
             LOGGER.error(e.toString());
         }
-        NilcordPremain.server = null;
     }
 
-    public void playerChatMessage(EntityPlayerMP player, String message) {
+    public void playerChatMessage(EntityPlayerMP player, ITextComponent message) {
+        if (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isEmpty() : CONFIG.formatting.discord.chat_message.value().isEmpty()) return;
+
         NilcordPremain.discord.onPlayerChatMessage(player, message);
     }
 
     public void playerJoin(EntityPlayerMP player) {
-        String message = CONFIG.formatting.discord.join_message.value()
-                .replace("<username>", player.getGameProfile().getName())
-                .replace("<displayname>", player.getDisplayName());
+        if (CONFIG.formatting.discord.join_message.value().isEmpty()) return;
+
+        String message = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.join_message.value(),
+                player
+        );
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
     public void playerLeave(EntityPlayerMP player) {
-        String message = CONFIG.formatting.discord.leave_message.value()
-                .replace("<username>", player.getGameProfile().getName())
-                .replace("<displayname>", player.getDisplayName());
+        if (CONFIG.formatting.discord.leave_message.value().isEmpty()) return;
+
+        String message = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.leave_message.value(),
+                player
+        );
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerAchievement(EntityPlayerMP player, Achievement achievement) {
-        if (player.func_147099_x().canUnlockAchievement(achievement)
-            && !player.func_147099_x().hasAchievementUnlocked(achievement)
-            && player.mcServer.func_147136_ar()
+    public void playerAdvancement(EntityPlayerMP player, Advancement advancement) {
+        DisplayInfo display = advancement.getDisplay();
+
+        if (player.getAdvancements().getProgress(advancement).isDone()
+                && display != null
+                && display.shouldAnnounceToChat()
+                && player.world.getGameRules().getBoolean("announceAdvancements")
         ) {
-            String message = CONFIG.formatting.discord.achievement_message.value()
-                .replace("<username>", player.getGameProfile().getName())
-                .replace("<displayname>", player.getDisplayName())
-                .replace("<achievement_title>", ((StatBaseAccessor) achievement).getStatName().getUnformattedTextForChat())
-                .replace(
-                    "<achievement_description>",
-                    achievement.statId.equals("achievement.openInventory")
-                        ? StatCollector.translateToLocal(((AchievementAccessor) achievement).getAchievementDescription()).replace("%1$s", "E")
-                        : StatCollector.translateToLocal(((AchievementAccessor) achievement).getAchievementDescription())
+            String template = switch (display.getFrame()) {
+                case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
+                case GOAL -> CONFIG.formatting.discord.advancement_goal_message.value();
+                case TASK -> CONFIG.formatting.discord.advancement_task_message.value();
+                default -> CONFIG.formatting.discord.advancement_fallback_message.value();
+            };
+
+            if (template.isEmpty()) return;
+
+            String message = TextUtils.parseAdvancement(
+                    template,
+                    player,
+                    display
             );
             NilcordPremain.discord.sendMessageToDiscord(message);
         }
     }
 
     public void playerDeath(EntityPlayerMP player, DamageSource source) {
-        String message = CONFIG.formatting.discord.death_message.value()
-                .replace("<username>", player.getGameProfile().getName())
-                .replace("<displayname>", player.getDisplayName())
-                .replace("<death_message>", source.func_151519_b(player).getUnformattedTextForChat());
+        if (CONFIG.formatting.discord.death_message.value().isEmpty()) return;
+
+        String message = TextUtils.parseDeath(
+                CONFIG.formatting.discord.death_message.value(),
+                player,
+                source
+        );
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 }

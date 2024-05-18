@@ -58,7 +58,7 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Player chat messages")
             @Comment("Additional placeholders: <message>")
-            public final TrackedValue<String> chat_message = value("**<username>** <message>");
+            public final TrackedValue<String> chat_message = value("**<<username>>** <message>");
 
             @Comment("Player join messages")
             @Comment("Additional placeholders: N/A")
@@ -68,9 +68,12 @@ public class NilcordConfig extends ReflectiveConfig {
             @Comment("Additional placeholders: N/A")
             public final TrackedValue<String> leave_message = value("> **<username> left the game**");
 
-            @Comment("Player achievement messages")
-            @Comment("Additional placeholders: <achievement_description> <achievement_title>")
-            public final TrackedValue<String> achievement_message = value("> **<username>** has just earned the achievement **[<achievement_title>]**\n> \\> _<achievement_description>_");
+            @Comment("Player advancement messages")
+            @Comment("Additional placeholders: <advancement_description> <advancement_title>")
+            public final TrackedValue<String> advancement_fallback_message = value("> **<username>** has just earned the achievement **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_challenge_message = value("> **<username>** has completed the challenge **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_goal_message = value("> **<username>** has reached the goal **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_task_message = value("> **<username>** has made the advancement **[<advancement_title>]**\n> \\> _<advancement_description>_");
 
             @Comment("Player death messages")
             @Comment("Additional placeholders: <death_message>")
@@ -91,36 +94,10 @@ public class NilcordConfig extends ReflectiveConfig {
                 @Comment("Additional placeholders: <message>")
                 public final TrackedValue<String> chat_message = value("<message>");
             }
-
-            @Comment("Settings pertaining to messages sent from other mods")
-            @Comment("Additional placeholders: N/A")
-            public final CompatFormatting compat = new CompatFormatting();
-            public static final class CompatFormatting extends Section {
-                @Comment("Settings pertaining to messages sent from ChromatiCraft")
-                @Comment("Additional placeholders: <progress_description> <progress_title>")
-                public final ChromatiCraftFormatting chromaticraft = new ChromatiCraftFormatting();
-                public static final class ChromatiCraftFormatting extends Section {
-                    @Comment("COLOR messages")
-                    @Comment("Additional placeholders: N/A")
-                    public final TrackedValue<String> color = value("> **<username>** has learned something new: \"<progress_title>\"");
-                    @Comment("DIMSTRUCT messages")
-                    @Comment("Additional placeholders: N/A")
-                    public final TrackedValue<String> dimstruct = value("> **<username>** has learned something new: \"<progress_title>\"");
-                    @Comment("FRAGMENT messages")
-                    @Comment("Additional placeholders: N/A")
-                    public final TrackedValue<String> fragment = value("> **<username>** has learned something new: *<progress_title>*");
-                    @Comment("PROGRESS messages")
-                    @Comment("Additional placeholders: N/A")
-                    public final TrackedValue<String> progress = value("> **<username>** has learned something new: __<progress_title>__");
-                    @Comment("LEVEL messages")
-                    @Comment("Additional placeholders: N/A")
-                    public final TrackedValue<String> level = value("> **<username>** has learned something new: **<progress_title>**");
-                }
-            }
         }
 
         @Comment("Settings pertaining to messages visible in Minecraft")
-        @Comment("Available placeholders: <message> <message_url> <nickname> <username>")
+        @Comment("Available placeholders: <message> <message_url> <nickname> <role_color> <username>")
         public final MinecraftFormatting minecraft = new MinecraftFormatting();
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
@@ -136,7 +113,7 @@ public class NilcordConfig extends ReflectiveConfig {
             public final TrackedValue<String> mention_format = value("§n@<nickname>§r");
 
             @Comment("Reply format")
-            @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_url> <reply_username>")
+            @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_role_color> <reply_url> <reply_username>")
             public final TrackedValue<String> reply_format = value("[§b←§r<reply_nickname>] ");
 
             @Comment("Attachment format")

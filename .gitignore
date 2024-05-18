@@ -1,40 +1,22 @@
-/libs/
-
-.gradle
+# eclipse
+bin
+*.launch
 .settings
-/.idea/
-/.vscode/
-/run/
-/build/
-/eclipse/
+.metadata
 .classpath
 .project
-/bin/
-/config/
-/crash-reports/
-/logs/
-options.txt
-/saves/
-usernamecache.json
-banned-ips.json
-banned-players.json
-eula.txt
-ops.json
-server.properties
-servers.dat
-usercache.json
-whitelist.json
-/out/
-*.iml
+
+# idea
+out
 *.ipr
 *.iws
-src/main/resources/mixins.*([!.]).json
-*.bat
-*.DS_Store
-!gradlew.bat
-.factorypath
-addon.local.gradle
-addon.local.gradle.kts
-addon.late.local.gradle
-addon.late.local.gradle.kts
-layout.json
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
