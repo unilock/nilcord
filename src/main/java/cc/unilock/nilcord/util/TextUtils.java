@@ -8,7 +8,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 
+import java.util.regex.Pattern;
+
 public class TextUtils {
+    private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)" + '§' + "[0-9A-FK-OR]");
+
     public static String parseDiscordMessage(String template, String attachmentChunk, String replyChunk, String usernameChunk, User author, Member member, Message message) {
         return template
                 .replace("<attachment_format>", attachmentChunk)
@@ -35,7 +39,7 @@ public class TextUtils {
 
     public static String parsePlayer(String template, EntityPlayerMP player) {
         return template
-                .replace("<displayname>", player.getDisplayName().getUnformattedText())
+                .replace("<displayname>", stripControlCodes(player.getDisplayName().getUnformattedText()))
                 .replace("<username>", player.getGameProfile().getName())
                 .replace("<uuid>", player.getGameProfile().getId().toString());
     }
@@ -54,5 +58,9 @@ public class TextUtils {
     public static String parseDeath(String template, EntityPlayerMP player, DamageSource source) {
         return parsePlayer(template, player)
                 .replace("<death_message>", source.getDeathMessage(player).getUnformattedText());
+    }
+
+    public static String stripControlCodes(String text) {
+        return FORMATTING_CODE_PATTERN.matcher(text).replaceAll("");
     }
 }
