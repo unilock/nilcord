@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.server.FMLServerHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,11 +44,13 @@ public class NilcordPremain {
     // Server starting / stopping events
     @Mod.EventHandler
     public void onServerStarted(FMLServerStartedEvent event) {
+        NilcordPremain.server = (DedicatedServer) FMLServerHandler.instance().getServer();
         listener.serverStart();
     }
     @Mod.EventHandler
     public void onServerStopping(FMLServerStoppingEvent event) {
         listener.serverStop();
+        NilcordPremain.server = null;
     }
 
     // Player events

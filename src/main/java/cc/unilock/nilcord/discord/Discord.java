@@ -1,5 +1,6 @@
 package cc.unilock.nilcord.discord;
 
+import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.IncomingWebhookClient;
@@ -69,6 +70,8 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (CONFIG.formatting.minecraft.discord_message.value().isEmpty()) return;
+
         if (!event.isFromType(ChannelType.TEXT)) return;
         if (!event.getChannel().asTextChannel().getId().equals(CONFIG.discord.channel_id.value())) return;
 
@@ -91,34 +94,31 @@ public class Discord extends ListenerAdapter {
 
         String reply_chunk = "";
         if (ref != null) {
-            Message refMessage = ref.getMessage() == null ? ref.resolve().complete() : ref.getMessage();
-            User refAuthor = refMessage.getAuthor();
-            Member refMember = refMessage.getMember();
-            reply_chunk = CONFIG.formatting.minecraft.reply_format.value()
-                    .replace("<reply_username>", refAuthor.getName())
-                    .replace("<reply_nickname>", refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName())
-                    .replace("<reply_message>", refMessage.getContentDisplay())
-                    .replace("<reply_url>", refMessage.getJumpUrl());
+            reply_chunk = TextUtils.parseDiscordReply(
+                    CONFIG.formatting.minecraft.reply_format.value(),
+                    ref.getMessage() == null ? ref.resolve().complete() : ref.getMessage()
+            );
         }
 
-        String msg = CONFIG.formatting.minecraft.discord_message.value()
-                .replace("<attachment_format>", attachment_chunk.toString())
-                .replace("<reply_format>", reply_chunk)
-                .replace("<username_format>", CONFIG.formatting.minecraft.username_format.value())
-
-                .replace("<username>", author.getName())
-                .replace("<nickname>", member.getEffectiveName())
-                .replace("<message>", message.getContentDisplay())
-                .replace("<message_url>", message.getJumpUrl());
+        String msg = TextUtils.parseDiscordMessage(
+                CONFIG.formatting.minecraft.discord_message.value(),
+                attachment_chunk.toString(),
+                reply_chunk,
+                CONFIG.formatting.minecraft.username_format.value(),
+                author,
+                member,
+                message
+        );
 
         server.getConfigurationManager().sendChatMsg(ForgeHooks.newChatWithLinks(msg));
     }
 
     public void onPlayerChatMessage(EntityPlayerMP player, String message) {
-        String msg = (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value())
-                .replace("<username>", player.getGameProfile().getName())
-                .replace("<displayname>", player.getDisplayName())
-                .replace("<message>", message);
+        String msg = TextUtils.parseMessage(
+                CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value(),
+                player,
+                message
+        );
 
         if (CONFIG.minecraft.enable_everyone_and_here.value()) {
             msg = parseEveryoneAndHere(msg);
@@ -152,14 +152,15 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendWebhookMessageToDiscord(String message, EntityPlayerMP player) {
-        String avatar = CONFIG.formatting.discord.webhook.avatar_url.value()
-            .replace("<username>", player.getGameProfile().getName())
-            .replace("<displayname>", player.getDisplayName())
-            .replace("<uuid>", player.getGameProfile().getId().toString());
+        String avatar = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.webhook.avatar_url.value(),
+                player
+        );
 
-        String username = CONFIG.formatting.discord.webhook.username.value()
-            .replace("<username>", player.getGameProfile().getName())
-            .replace("<displayname>", player.getDisplayName());
+        String username = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.webhook.username.value(),
+                player
+        );
 
         try (MessageCreateData data = new MessageCreateBuilder().setContent(message).build()) {
             webhook.sendMessage(data)
