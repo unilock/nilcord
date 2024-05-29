@@ -39,9 +39,9 @@ public class NilcordPremain implements ModInitializer {
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> {
             listener.playerChatMessage(sender, message.getContent());
         });
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            listener.playerJoin(handler.getPlayer());
-        });
+//        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+//            listener.playerJoin(handler.getPlayer());
+//        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             listener.playerLeave(handler.getPlayer());
         });
