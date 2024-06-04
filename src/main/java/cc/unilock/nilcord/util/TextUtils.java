@@ -4,6 +4,7 @@ import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
+import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,6 +24,10 @@ public class TextUtils {
         return TextParserUtils.formatText(str);
     }
 
+    private static Text parseMarkdown(String str) {
+        return TextNode.asSingle(MarkdownLiteParserV1.ALL.parseNodes(TextNode.of(str))).toText(ParserContext.of(), true);
+    }
+
     public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, User author, Member member, Message message) {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
@@ -34,7 +39,7 @@ public class TextUtils {
                 "reply_format", replyChunk,
                 "username", Text.literal(author.getName()),
                 "nickname", Text.literal(member.getEffectiveName()),
-                "message", MarkdownLiteParserV1.ALL.parseText(message.getContentDisplay(), ParserContext.of())
+                "message", parseMarkdown(message.getContentDisplay())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
@@ -51,7 +56,7 @@ public class TextUtils {
         Map<String, Text> placeholders = Map.of(
                 "reply_username", Text.literal(refAuthor.getName()),
                 "reply_nickname", Text.literal(refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName()),
-                "reply_message", MarkdownLiteParserV1.ALL.parseText(refMessage.getContentDisplay(), ParserContext.of())
+                "reply_message", parseMarkdown(refMessage.getContentDisplay())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
