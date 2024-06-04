@@ -3,6 +3,7 @@
 	"package": "cc.unilock.nilcord.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
+		"PlaceholdersMixin",
 		"PlayerAdvancementTrackerMixin",
 		"PlayerManagerMixin"
 	],
