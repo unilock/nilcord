@@ -6,6 +6,7 @@ import Reika.ChromatiCraft.Magic.Progression.ProgressStage;
 import Reika.ChromatiCraft.Magic.Progression.ResearchLevel;
 import Reika.ChromatiCraft.Registry.ChromaResearch;
 import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.util.TextUtils;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -76,9 +77,7 @@ public class ChromatiCraftCompat {
     }
 
     private static void sendMessage(EntityPlayerMP player, String template, String title, String desc) {
-        String msg = template
-                .replace("<username>", player.getGameProfile().getName())
-                .replace("<displayname>", player.getDisplayName())
+        String msg = TextUtils.parsePlayer(template, player)
                 .replace("<progress_title>", title)
                 .replace("<progress_description>", desc);
 
