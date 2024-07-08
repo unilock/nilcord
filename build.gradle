@@ -4,6 +4,7 @@ plugins {
 	id 'idea'
 	id 'maven-publish'
 	id 'net.neoforged.gradle.userdev' version '7.0.153'
+	id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 version = "${mod_version}+${minecraft_version}+neoforge"
@@ -50,31 +51,61 @@ runs {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-jarJar.enable()
-
 configurations {
 	runtimeClasspath.extendsFrom localRuntime
+	shade
 }
 
 dependencies {
 	implementation "net.neoforged:neoforge:${neo_version}"
 
-	implementation jarJar("net.dv8tion:JDA:${project.jda_version}") {
+	implementation shade("net.dv8tion:JDA:${project.jda_version}") {
 		exclude module: 'opus-java'
 	}
-	implementation jarJar("folk.sisby:kaleido-config:${project.kaleido_version}")
+	implementation shade("folk.sisby:kaleido-config:${project.kaleido_version}")
 
-	jarJar("com.fasterxml.jackson.core:jackson-core:2.16.0")
-	jarJar("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-	jarJar("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
-	jarJar("com.neovisionaries:nv-websocket-client:2.14")
-	jarJar("com.squareup.okhttp3:okhttp:4.12.0")
-	jarJar("com.squareup.okio:okio-jvm:3.9.0")
-	jarJar("net.sf.trove4j:trove4j:3.0.3")
-	jarJar("org.apache.commons:commons-collections4:4.4")
-	jarJar("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
-	jarJar("org.slf4j:slf4j-api:2.0.12") // Use 2.0 instead of 1.0
+	shade("com.fasterxml.jackson.core:jackson-core:2.16.0")
+	shade("com.fasterxml.jackson.core:jackson-databind:2.16.0")
+	shade("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
+	shade("com.neovisionaries:nv-websocket-client:2.14")
+	shade("com.squareup.okhttp3:okhttp:4.12.0")
+	shade("com.squareup.okio:okio-jvm:3.9.0")
+	shade("net.sf.trove4j:trove4j:3.0.3")
+	shade("org.apache.commons:commons-collections4:4.4")
+	shade("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
+	shade("org.slf4j:slf4j-api:2.0.12") // Use 2.0 instead of 1.0
 }
+
+jar {
+	archiveClassifier = 'slim'
+}
+
+shadowJar {
+	archiveClassifier = ''
+
+	configurations = [project.configurations.shade]
+
+	exclude 'LICENSE'
+	exclude 'META-INF/**'
+
+	relocate 'com.electronwill.nightconfig', 'cc.unilock.nilcord.lib.nightconfig'
+	relocate 'com.fasterxml.jackson', 'cc.unilock.nilcord.lib.jackson'
+	relocate 'com.iwebpp.crypto', 'cc.unilock.nilcord.lib.crypto'
+	relocate 'com.neovisionaries.ws', 'cc.unilock.nilcord.lib.ws'
+	relocate 'folk.sisby.kaleido', 'cc.unilock.nilcord.lib.kaleido'
+	relocate 'gnu.trove', 'cc.unilock.nilcord.lib.trove'
+	relocate 'kotlin', 'cc.unilock.nilcord.lib.kotlin'
+	relocate 'net.dv8tion.jda', 'cc.unilock.nilcord.lib.jda'
+	relocate 'okhttp3', 'cc.unilock.nilcord.lib.okhttp3'
+	relocate 'okio', 'cc.unilock.nilcord.lib.okio'
+	relocate 'org.apache.commons', 'cc.unilock.nilcord.lib.commons'
+	relocate 'org.jetbrains.annotations', 'cc.unilock.nilcord.lib.annotations'
+	relocate 'org.slf4j', 'cc.unilock.nilcord.lib.slf4j'
+
+	minimize()
+}
+
+tasks.build.dependsOn tasks.shadowJar
 
 tasks.withType(ProcessResources).configureEach {
 	var replaceProperties = [
