@@ -86,7 +86,12 @@ shadowJar {
 	configurations = [project.configurations.shade]
 
 	exclude 'LICENSE'
-	exclude 'META-INF/**'
+	exclude new Spec<FileTreeElement>() {
+		@Override
+		boolean isSatisfiedBy(FileTreeElement fileTreeElement) {
+			return fileTreeElement.path.startsWith("META-INF/") && fileTreeElement.path != "META-INF/mods.toml"
+		}
+	}
 
 	relocate 'com.electronwill.nightconfig', 'cc.unilock.nilcord.lib.nightconfig'
 	relocate 'com.fasterxml.jackson', 'cc.unilock.nilcord.lib.jackson'
@@ -95,11 +100,13 @@ shadowJar {
 	relocate 'folk.sisby.kaleido', 'cc.unilock.nilcord.lib.kaleido'
 	relocate 'gnu.trove', 'cc.unilock.nilcord.lib.trove'
 	relocate 'kotlin', 'cc.unilock.nilcord.lib.kotlin'
+	relocate 'net.bytebuddy', 'cc.unilock.nilcord.lib.bytebuddy'
 	relocate 'net.dv8tion.jda', 'cc.unilock.nilcord.lib.jda'
 	relocate 'okhttp3', 'cc.unilock.nilcord.lib.okhttp3'
 	relocate 'okio', 'cc.unilock.nilcord.lib.okio'
 	relocate 'org.apache.commons', 'cc.unilock.nilcord.lib.commons'
-	relocate 'org.jetbrains.annotations', 'cc.unilock.nilcord.lib.annotations'
+	relocate 'org.intellij.lang.annotations', 'cc.unilock.nilcord.lib.intellij_annotations'
+	relocate 'org.jetbrains.annotations', 'cc.unilock.nilcord.lib.jetbrains_annotations'
 	relocate 'org.slf4j', 'cc.unilock.nilcord.lib.slf4j'
 
 	minimize()
