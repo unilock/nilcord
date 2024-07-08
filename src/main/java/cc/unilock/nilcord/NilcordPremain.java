@@ -2,7 +2,6 @@ package cc.unilock.nilcord;
 
 import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
-import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,10 +15,11 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod("nilcord")
 public class NilcordPremain {
-    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger("nilcord");
     public static final NilcordConfig CONFIG = NilcordConfig.createToml(FMLPaths.CONFIGDIR.get(), "", "nilcord", NilcordConfig.class);
     public static Discord discord;
     public static EventListener listener;
