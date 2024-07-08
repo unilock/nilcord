@@ -2,10 +2,7 @@
 	"required": true,
 	"package": "cc.unilock.nilcord.mixin",
 	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"PlayerAdvancementTrackerMixin",
-		"PlayerManagerMixin"
-	],
+	"mixins": [],
 	"injectors": {
 		"defaultRequire": 1
 	}

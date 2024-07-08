@@ -1,14 +1,13 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'java-library'
+	id 'eclipse'
+	id 'idea'
 	id 'maven-publish'
+	id 'net.neoforged.gradle.userdev' version '7.0.153'
 }
 
-version = "${project.mod_version}+${project.minecraft_version}+fabric"
-group = project.maven_group
-
-base {
-	archivesName = project.archives_base_name
-}
+version = mod_version
+group = mod_group_id
 
 repositories {
 	maven { url 'https://maven.nucleoid.xyz/' }
@@ -16,78 +15,110 @@ repositories {
 	mavenCentral()
 }
 
-loom {
-	mods {
-		"nilcord" {
-			sourceSet("main")
-		}
+base {
+	archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+runs {
+	configureEach {
+		systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+		systemProperty 'forge.logging.console.level', 'debug'
+
+		modSource project.sourceSets.main
 	}
+
+	client {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+	}
+
+	server {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+		programArgument '--nogui'
+	}
+
+	gameTestServer {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+	}
+
+	data {
+		programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+	}
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+jarJar.enable()
+
+configurations {
+	runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.neoforged:neoforge:${neo_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation include("eu.pb4:placeholder-api:${project.papi_version}")
-
-	implementation include("net.dv8tion:JDA:${project.jda_version}") {
+	implementation jarJar("net.dv8tion:JDA:${project.jda_version}") {
 		exclude module: 'opus-java'
 	}
-	implementation include("folk.sisby:kaleido-config:${project.kaleido_version}")
+	implementation jarJar("folk.sisby:kaleido-config:${project.kaleido_version}")
 
-	include("com.fasterxml.jackson.core:jackson-core:2.16.0")
-	include("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-	include("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
-	include("com.neovisionaries:nv-websocket-client:2.14")
-	include("com.squareup.okhttp3:okhttp:4.12.0")
-	include("com.squareup.okio:okio-jvm:3.9.0")
-	include("net.sf.trove4j:trove4j:3.0.3")
-	include("org.apache.commons:commons-collections4:4.4")
-	include("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
-	include("org.slf4j:slf4j-api:2.0.12") // Use 2.0 instead of 1.0
+	jarJar("com.fasterxml.jackson.core:jackson-core:2.16.0")
+	jarJar("com.fasterxml.jackson.core:jackson-databind:2.16.0")
+	jarJar("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
+	jarJar("com.neovisionaries:nv-websocket-client:2.14")
+	jarJar("com.squareup.okhttp3:okhttp:4.12.0")
+	jarJar("com.squareup.okio:okio-jvm:3.9.0")
+	jarJar("net.sf.trove4j:trove4j:3.0.3")
+	jarJar("org.apache.commons:commons-collections4:4.4")
+	jarJar("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
+	jarJar("org.slf4j:slf4j-api:2.0.12") // Use 2.0 instead of 1.0
 }
 
-processResources {
-	inputs.property "version", project.version
+tasks.withType(ProcessResources).configureEach {
+	var replaceProperties = [
+			minecraft_version		: minecraft_version,
+			minecraft_version_range	: minecraft_version_range,
+			neo_version				: neo_version,
+			neo_version_range		: neo_version_range,
+			loader_version_range	: loader_version_range,
+			mod_id					: mod_id,
+			mod_name				: mod_name,
+			mod_license				: mod_license,
+			mod_version				: mod_version,
+			mod_authors				: mod_authors,
+			mod_description			: mod_description
+	]
+	inputs.properties replaceProperties
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+	filesMatching(['META-INF/mods.toml']) {
+		expand replaceProperties
+	}
+}
+
+// Example configuration to allow publishing using the maven-publish plugin
+publishing {
+	publications {
+		register('mavenJava', MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+		maven {
+			url "file://${project.projectDir}/repo"
+		}
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
-	it.options.release = 17
+	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-java {
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${base.archivesName.get()}" }
-	}
-}
-
-// Configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+	module {
+		downloadSources = true
+		downloadJavadoc = true
 	}
 }

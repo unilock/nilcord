@@ -8,10 +8,10 @@ import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.minecraft.advancement.AdvancementDisplay;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,28 +20,28 @@ import java.util.regex.Pattern;
 public class TextUtils {
     private static final Pattern ANGLE_BRACKETS = Pattern.compile("(?<!((?<!(\\\\))\\\\))<(?<id>[^<>]+)>");
 
-    private static Text parse(String str) {
+    private static Component parse(String str) {
         return TextParserUtils.formatText(str);
     }
 
-    public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, User author, Member member, Message message) {
+    public static Component parseDiscordMessage(String template, String attachmentChunk, Component replyChunk, String usernameChunk, User author, Member member, Message message) {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
                 .replace("<role_color>", ColorUtils.getHexColor(member))
                 .replace("<message_url>", message.getJumpUrl());
 
-        Map<String, Text> placeholders = Map.of(
+        Map<String, Component> placeholders = Map.of(
                 "reply_format", replyChunk,
-                "username", Text.literal(author.getName()),
-                "nickname", Text.literal(member.getEffectiveName()),
+                "username", Component.literal(author.getName()),
+                "nickname", Component.literal(member.getEffectiveName()),
                 "message", MarkdownLiteParserV1.ALL.parseText(message.getContentDisplay(), ParserContext.of())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
     }
 
-    public static Text parseDiscordReply(String template, Message refMessage) {
+    public static Component parseDiscordReply(String template, Message refMessage) {
         User refAuthor = refMessage.getAuthor();
         Member refMember = refMessage.getMember();
 
@@ -49,35 +49,35 @@ public class TextUtils {
                 .replace("<reply_role_color>", refMember == null ? ColorUtils.WHITE : ColorUtils.getHexColor(refMember))
                 .replace("<reply_url>", refMessage.getJumpUrl());
 
-        Map<String, Text> placeholders = Map.of(
-                "reply_username", Text.literal(refAuthor.getName()),
-                "reply_nickname", Text.literal(refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName()),
+        Map<String, Component> placeholders = Map.of(
+                "reply_username", Component.literal(refAuthor.getName()),
+                "reply_nickname", Component.literal(refMember == null ? refAuthor.getEffectiveName() : refMember.getEffectiveName()),
                 "reply_message", MarkdownLiteParserV1.ALL.parseText(refMessage.getContentDisplay(), ParserContext.of())
         );
 
         return Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders);
     }
 
-    public static Text parsePlayer(String template, ServerPlayerEntity player) {
-        Map<String, Text> placeholders = Map.of(
-                "displayname", Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().getName())),
-                "username", Text.literal(player.getGameProfile().getName()),
-                "uuid", Text.literal(player.getGameProfile().getId().toString())
+    public static Component parsePlayer(String template, ServerPlayer player) {
+        Map<String, Component> placeholders = Map.of(
+                "displayname", Objects.requireNonNullElse(player.getDisplayName(), Component.literal(player.getGameProfile().getName())),
+                "username", Component.literal(player.getGameProfile().getName()),
+                "uuid", Component.literal(player.getGameProfile().getId().toString())
         );
 
         return Placeholders.parseText(Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders), PlaceholderContext.of(player));
     }
 
-    public static Text parseMessage(String template, ServerPlayerEntity player, Text message) {
-        Map<String, Text> placeholders = Map.of(
+    public static Component parseMessage(String template, ServerPlayer player, Component message) {
+        Map<String, Component> placeholders = Map.of(
                 "message", message
         );
 
         return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
     }
 
-    public static Text parseAdvancement(String template, ServerPlayerEntity player, AdvancementDisplay display) {
-        Map<String, Text> placeholders = Map.of(
+    public static Component parseAdvancement(String template, ServerPlayer player, DisplayInfo display) {
+        Map<String, Component> placeholders = Map.of(
                 "advancement_title", display.getTitle(),
                 "advancement_description", display.getDescription()
         );
@@ -85,9 +85,9 @@ public class TextUtils {
         return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
     }
 
-    public static Text parseDeath(String template, ServerPlayerEntity player, DamageSource source) {
-        Map<String, Text> placeholders = Map.of(
-                "death_message", source.getDeathMessage(player)
+    public static Component parseDeath(String template, ServerPlayer player, DamageSource source) {
+        Map<String, Component> placeholders = Map.of(
+                "death_message", source.getLocalizedDeathMessage(player)
         );
 
         return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
