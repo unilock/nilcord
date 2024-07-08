@@ -65,7 +65,7 @@ public class NilcordPremain {
         }
 
         @SubscribeEvent
-        public void advancement(AdvancementEvent event) {
+        public void advancement(AdvancementEvent.AdvancementEarnEvent event) {
             if (event.getEntity() instanceof ServerPlayer player) {
                 listener.playerAdvancement(player, event.getAdvancement());
             }
