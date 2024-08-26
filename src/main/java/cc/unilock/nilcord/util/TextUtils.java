@@ -11,7 +11,7 @@ import net.minecraft.util.text.ITextComponent;
 import java.util.regex.Pattern;
 
 public class TextUtils {
-    private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)" + '§' + "[0-9A-FK-OR]");
+    private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile('§' + "[0-9A-FK-OR]", Pattern.CASE_INSENSITIVE);
 
     public static String parseDiscordMessage(String template, String attachmentChunk, String replyChunk, String usernameChunk, User author, Member member, Message message) {
         return template
