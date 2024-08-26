@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8.5-GTNH",
-  "package": "cc.unilock.nilcord.mixin",
+  "package": "cc.unilock.nilcord.mixin.early",
   "refmap": "mixins.nilcord.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8"

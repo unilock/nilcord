@@ -1,4 +1,4 @@
-package cc.unilock.nilcord.mixin.accessor;
+package cc.unilock.nilcord.mixin.early.minecraft;
 
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.IChatComponent;

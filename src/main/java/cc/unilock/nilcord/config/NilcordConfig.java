@@ -116,6 +116,15 @@ public class NilcordConfig extends ReflectiveConfig {
                     @Comment("Additional placeholders: N/A")
                     public final TrackedValue<String> level = value("> **<username>** has learned something new: **<progress_title>**");
                 }
+
+                @Comment("Settings pertaining to messages sent from ServerUtilities")
+                public final ServerUtilitiesFormatting serverutilities = new ServerUtilitiesFormatting();
+                public static final class ServerUtilitiesFormatting extends Section {
+                    @Comment("Player starts being AFK messages")
+                    public final TrackedValue<String> afk_start = value("> **<username> is now AFK**");
+                    @Comment("Player stops being AFK messages")
+                    public final TrackedValue<String> afk_stop = value("> **<username> is no longer AFK**");
+                }
             }
         }
 

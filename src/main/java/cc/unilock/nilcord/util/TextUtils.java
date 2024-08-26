@@ -1,7 +1,7 @@
 package cc.unilock.nilcord.util;
 
-import cc.unilock.nilcord.mixin.accessor.AchievementAccessor;
-import cc.unilock.nilcord.mixin.accessor.StatBaseAccessor;
+import cc.unilock.nilcord.mixin.early.minecraft.AchievementAccessor;
+import cc.unilock.nilcord.mixin.early.minecraft.StatBaseAccessor;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;

@@ -1,4 +1,4 @@
-package cc.unilock.nilcord.mixin.accessor;
+package cc.unilock.nilcord.mixin.early.minecraft;
 
 import net.minecraft.stats.Achievement;
 import org.spongepowered.asm.mixin.Mixin;

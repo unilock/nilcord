@@ -61,6 +61,8 @@ public class EventListener {
     }
 
     public void playerAchievement(EntityPlayerMP player, Achievement achievement) {
+        if (CONFIG.formatting.discord.achievement_message.value().isEmpty()) return;
+
         if (player.func_147099_x().canUnlockAchievement(achievement)
                 && !player.func_147099_x().hasAchievementUnlocked(achievement)
                 && player.mcServer.func_147136_ar()

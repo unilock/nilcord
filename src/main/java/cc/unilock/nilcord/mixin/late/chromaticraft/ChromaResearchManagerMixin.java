@@ -1,4 +1,4 @@
-package cc.unilock.nilcord.mixin;
+package cc.unilock.nilcord.mixin.late.chromaticraft;
 
 import Reika.ChromatiCraft.Magic.Progression.ChromaResearchManager;
 import Reika.ChromatiCraft.Magic.Progression.ResearchLevel;

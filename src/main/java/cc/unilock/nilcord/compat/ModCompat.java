@@ -12,5 +12,8 @@ public class ModCompat {
             LOGGER.info("ChromatiCraft detected - loading support");
             MinecraftForge.EVENT_BUS.register(new ChromatiCraftCompat());
         }
+        if (Loader.isModLoaded("serverutilities")) {
+            LOGGER.info("ServerUtilities detected - loading support");
+        }
     }
 }

@@ -77,10 +77,12 @@ public class ChromatiCraftCompat {
     }
 
     private static void sendMessage(EntityPlayerMP player, String template, String title, String desc) {
-        String msg = TextUtils.parsePlayer(template, player)
+        if (!template.isEmpty()) {
+            String msg = TextUtils.parsePlayer(template, player)
                 .replace("<progress_title>", title)
                 .replace("<progress_description>", desc);
 
-        NilcordPremain.discord.sendMessageToDiscord(msg);
+            NilcordPremain.discord.sendMessageToDiscord(msg);
+        }
     }
 }
