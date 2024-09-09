@@ -1,8 +1,8 @@
 apply from: 'gradle/scripts/helpers.gradle'
 
-//configurations {
-//    shade
-//}
+configurations {
+    shade
+}
 
 repositories {
     maven { url 'https://repo.sleeping.town' }
@@ -34,8 +34,8 @@ repositories {
 }
 
 dependencies {
-    embed implementation('net.dv8tion:JDA:5.0.0-beta.21') {
+    shade implementation('net.dv8tion:JDA:5.0.0-beta.21') {
         exclude module: 'opus-java'
     }
-    embed implementation('folk.sisby:kaleido-config:0.3.1+1.3.1')
+    shade implementation('folk.sisby:kaleido-config:0.3.1+1.3.1')
 }
