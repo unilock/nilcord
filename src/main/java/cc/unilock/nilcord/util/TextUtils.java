@@ -40,9 +40,9 @@ public class TextUtils {
                 .replace("<uuid>", player.getGameProfile().getId().toString());
     }
 
-    public static String parseMessage(String template, EntityPlayerMP player, ITextComponent message) {
+    public static String parseMessage(String template, EntityPlayerMP player, String message) {
         return parsePlayer(template, player)
-                .replace("<message>", message.getUnformattedText());
+                .replace("<message>", message);
     }
 
     public static String parseAdvancement(String template, EntityPlayerMP player, DisplayInfo display) {

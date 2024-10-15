@@ -67,7 +67,7 @@ public class NilcordPremain {
     public static final class MFEvents {
         @SubscribeEvent
         public void onServerChat(ServerChatEvent event) {
-            listener.playerChatMessage(event.getPlayer(), event.getComponent());
+            listener.playerChatMessage(event.getPlayer(), event.getMessage());
         }
         @SubscribeEvent
         public void onLivingDeath(LivingDeathEvent event) {

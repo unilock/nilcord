@@ -114,7 +114,7 @@ public class Discord extends ListenerAdapter {
         server.getPlayerList().sendMessage(ForgeHooks.newChatWithLinks(msg));
     }
 
-    public void onPlayerChatMessage(EntityPlayerMP player, ITextComponent message) {
+    public void onPlayerChatMessage(EntityPlayerMP player, String message) {
         String msg = TextUtils.parseMessage(
                 CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value(),
                 player,

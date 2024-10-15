@@ -36,7 +36,7 @@ public class EventListener {
         }
     }
 
-    public void playerChatMessage(EntityPlayerMP player, ITextComponent message) {
+    public void playerChatMessage(EntityPlayerMP player, String message) {
         if (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isEmpty() : CONFIG.formatting.discord.chat_message.value().isEmpty()) return;
 
         NilcordPremain.discord.onPlayerChatMessage(player, message);
