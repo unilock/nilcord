@@ -1,5 +1,5 @@
 plugins {
-	id 'com.unascribed.nilgradle' version '1.4.0'
+	id 'com.unascribed.nilgradle' version '1.4.3'
 	id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -10,7 +10,7 @@ compileJava.options.encoding = 'UTF-8'
 
 group = 'cc.unilock'
 archivesBaseName = 'Nilcord'
-version = '2.1.0'
+version = '2.3.0'
 
 repositories {
 	mavenLocal()
@@ -18,6 +18,7 @@ repositories {
 		url 'https://repo.sleeping.town'
 		content {
 			includeGroup 'com.unascribed'
+			includeGroup 'folk.sisby'
 		}
 	}
 	mavenCentral()
@@ -37,14 +38,14 @@ dependencies {
 
 	game nil.minecraft('1.4.7', 'client')
 
-	implementation shade('net.dv8tion:JDA:5.0.0-beta.20') {
+	implementation shade('net.dv8tion:JDA:5.2.1') {
 		exclude module: 'opus-java'
 	}
-	implementation shade('folk.sisby:kaleido-config:0.2.0+1.2.0-beta.5')
+	implementation shade('folk.sisby:kaleido-config:0.3.1+1.3.2')
 }
 
 mappings {
-	work 'com.unascribed:unknownthingy:1.20@tsrg'
+	work 'com.unascribed:unknownthingy:1.23@tsrg'
 }
 
 jar {
