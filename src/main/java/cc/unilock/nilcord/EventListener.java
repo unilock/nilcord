@@ -68,7 +68,7 @@ public class EventListener {
         // So, bad news! Statistics aren't server-side in 1.4.7 LOL
 
         /*
-        String message = TextUtils.parseAdvancement(
+        String message = TextUtils.parseAchievement(
                 CONFIG.formatting.discord.achievement_message.value(),
                 player,
                 achievement

@@ -47,7 +47,7 @@ public class TextUtils {
                 .replace("<message>", message);
     }
 
-    public static String parseAdvancement(String template, EntityServerPlayer player, Achievement achievement) {
+    public static String parseAchievement(String template, EntityServerPlayer player, Achievement achievement) {
         return parsePlayer(template, player)
                 .replace("<achievement_title>", Translate.format(achievement.statName))
                 .replace("<achievement_description>",

@@ -24,7 +24,7 @@ public class EntityPlayerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void achievement(EntityPlayer player, StatBase stat) {
-			if (stat instanceof Achievement) {
+			if (player instanceof EntityServerPlayer && stat instanceof Achievement) {
 				NilcordPremain.listener.playerAchievement((EntityServerPlayer) player, (Achievement) stat);
 			}
 		}
