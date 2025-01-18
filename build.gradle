@@ -10,7 +10,7 @@ compileJava.options.encoding = 'UTF-8'
 
 group = 'cc.unilock'
 archivesBaseName = 'nilcord'
-version = '2.3.1'
+version = '2.4.0'
 
 repositories {
 	mavenLocal()

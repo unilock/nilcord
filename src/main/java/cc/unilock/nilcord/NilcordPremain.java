@@ -3,6 +3,7 @@ package cc.unilock.nilcord;
 import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
 import cc.unilock.nilcord.transformer.ClassReaderTransformer;
+import cc.unilock.nilcord.transformer.CrashReportTransformer;
 import cc.unilock.nilcord.transformer.DedicatedServerTransformer;
 import cc.unilock.nilcord.transformer.EntityPlayerTransformer;
 import cc.unilock.nilcord.transformer.EntityServerPlayerTransformer;
@@ -23,6 +24,7 @@ public class NilcordPremain implements Runnable {
 	public static EventListener listener;
 	public static DedicatedServer server;
 
+	// TODO: delegate references to Minecraft classes in Discord so we can init earlier
 	@Override
 	public void run() {
 		ModRemapper.setTargetMapping("default");
@@ -30,9 +32,10 @@ public class NilcordPremain implements Runnable {
 		// Required for Forge compatibility
 		ClassTransformer.register(new ClassReaderTransformer());
 
-		// Server starting / stopping events
+		// Server starting / stopping / crashed events
 		ClassTransformer.register(new DedicatedServerTransformer());
 		ClassTransformer.register(new MinecraftServerTransformer());
+		ClassTransformer.register(new CrashReportTransformer());
 
 		// Player events
 		ClassTransformer.register(new EntityPlayerTransformer());

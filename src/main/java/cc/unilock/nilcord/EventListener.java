@@ -1,6 +1,7 @@
 package cc.unilock.nilcord;
 
 import cc.unilock.nilcord.util.TextUtils;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityServerPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -36,6 +37,13 @@ public class EventListener {
             LOGGER.error(e.toString());
         }
         NilcordPremain.server = null;
+    }
+
+    // TODO: upload report.getCompleteReport() to mclogs or something (configurable)
+    public void serverCrash(CrashReport report) {
+        if (CONFIG.formatting.discord.server_crash_message.value().isEmpty()) return;
+
+        NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
     }
 
     public void playerChatMessage(EntityServerPlayer player, String message) {
