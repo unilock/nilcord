@@ -69,6 +69,8 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (server == null) return;
+
         if (CONFIG.formatting.minecraft.discord_message.value().isEmpty()) return;
 
         if (!event.isFromType(ChannelType.TEXT)) return;
