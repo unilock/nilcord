@@ -43,8 +43,9 @@ dependencies {
 	include("com.neovisionaries:nv-websocket-client:2.14")
 	include("com.squareup.okhttp3:okhttp:4.12.0")
 	include("com.squareup.okio:okio-jvm:3.10.2")
-	include("net.sf.trove4j:trove4j:3.1.0")
+	include("net.sf.trove4j:trove4j:3.0.3")
 	include("org.apache.commons:commons-collections4:4.4")
+	include("org.jetbrains.kotlin:kotlin-stdlib:1.9.25")
 	include("org.slf4j:slf4j-api:2.0.13") // Use 2.0 instead of 1.0
 }
 
