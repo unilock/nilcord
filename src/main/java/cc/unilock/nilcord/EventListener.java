@@ -13,6 +13,8 @@ import static cc.unilock.nilcord.NilcordPremain.CONFIG;
 import static cc.unilock.nilcord.NilcordPremain.LOGGER;
 
 public class EventListener {
+    private boolean crash = false;
+
     public void serverStart() {
         try {
             NilcordPremain.discord.getJda().awaitReady();
@@ -26,7 +28,7 @@ public class EventListener {
 
     public void serverStop() {
         try {
-            if (!CONFIG.formatting.discord.server_stop_message.value().isEmpty()) {
+            if (!CONFIG.formatting.discord.server_stop_message.value().isEmpty() && !this.crash) {
                 NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
             }
             NilcordPremain.discord.shutdown();
@@ -34,6 +36,14 @@ public class EventListener {
         } catch (InterruptedException e) {
             LOGGER.error(e.toString());
         }
+    }
+
+    // TODO: upload report.asString() to mclogs or something (configurable)
+    public void serverCrash(CrashReport report) {
+        if (CONFIG.formatting.discord.server_crash_message.value().isEmpty()) return;
+
+        this.crash = true;
+        NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
     }
 
     public void playerChatMessage(EntityPlayerMP player, String message) {

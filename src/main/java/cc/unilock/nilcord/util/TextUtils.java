@@ -1,10 +1,13 @@
 package cc.unilock.nilcord.util;
 
+import cc.unilock.nilcord.mixin.early.minecraft.AchievementAccessor;
+import cc.unilock.nilcord.mixin.early.minecraft.StatBaseAccessor;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 
