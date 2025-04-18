@@ -80,7 +80,7 @@ public class EventListener {
         if (player.getAdvancementTracker().getProgress(advancement).isDone()
                 && display != null
                 && display.shouldAnnounceToChat()
-                && player.getWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)
+                && player.getServerWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)
         ) {
             String template = switch (display.getFrame()) {
                 case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
