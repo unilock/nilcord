@@ -23,6 +23,7 @@ public class TextUtils {
             .globalPlaceholders()
             .markdown()
             .quickText()
+            .simplifiedTextFormat()
             .build();
 
     public static Text parseDiscordMessage(String template, String attachmentChunk, Text replyChunk, String usernameChunk, User author, Member member, Message message) {
