@@ -3,7 +3,7 @@
 	"id": "nilcord",
 	"version": "${version}",
 	"name": "Nilcord",
-	"description": "A Discord bridge for Minecraft 1.20.3 and above using Fabric.",
+	"description": "A Discord bridge for Minecraft 1.20.3 and above(?) using Fabric.",
 	"authors": [
 		"unilock"
 	],
