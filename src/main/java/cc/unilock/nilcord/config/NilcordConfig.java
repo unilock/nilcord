@@ -56,6 +56,10 @@ public class NilcordConfig extends ReflectiveConfig {
             @Comment("Available placeholders: N/A")
             public final TrackedValue<String> server_stop_message = value("**Server stopped!**");
 
+            @Comment("Server crash message")
+            @Comment("Available placeholders: N/A")
+            public final TrackedValue<String> server_crash_message = value("**Server crashed :(**");
+
             @Comment("Player chat messages")
             @Comment("Additional placeholders: <message>")
             public final TrackedValue<String> chat_message = value("**<<username>>** <message>");
@@ -68,9 +72,12 @@ public class NilcordConfig extends ReflectiveConfig {
             @Comment("Additional placeholders: N/A")
             public final TrackedValue<String> leave_message = value("> **<username> left the game**");
 
-            @Comment("Player achievement messages")
-            @Comment("Additional placeholders: <achievement_description> <achievement_title>")
-            public final TrackedValue<String> achievement_message = value("> **<username>** has just earned the achievement **[<achievement_title>]**\n> \\> _<achievement_description>_");
+            @Comment("Player advancement messages")
+            @Comment("Additional placeholders: <advancement_description> <advancement_title>")
+            public final TrackedValue<String> advancement_fallback_message = value("> **<username>** has just earned the achievement **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_challenge_message = value("> **<username>** has completed the challenge **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_goal_message = value("> **<username>** has reached the goal **[<advancement_title>]**\n> \\> _<advancement_description>_");
+            public final TrackedValue<String> advancement_task_message = value("> **<username>** has made the advancement **[<advancement_title>]**\n> \\> _<advancement_description>_");
 
             @Comment("Player death messages")
             @Comment("Additional placeholders: <death_message>")
@@ -142,7 +149,7 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Mention format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> mention_format = value("§n@<nickname>§r");
+            public final TrackedValue<String> mention_format = value("<underline><hover:show_text:'@<username>'>@<nickname></hover></underline>");
 
             @Comment("Reply format")
             @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_role_color> <reply_url> <reply_username>")
@@ -150,7 +157,7 @@ public class NilcordConfig extends ReflectiveConfig {
 
             @Comment("Attachment format")
             @Comment("Additional placeholders: <attachment_url>")
-            public final TrackedValue<String> attachment_format = value("[ §bAttachment: §n<attachment_url>§r ]");
+            public final TrackedValue<String> attachment_format = value("<click:open_url:'<attachment_url>'>[<aqua>Attachment</aqua>]</click>");
         }
     }
 }

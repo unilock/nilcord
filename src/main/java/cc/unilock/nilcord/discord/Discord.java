@@ -3,12 +3,7 @@ package cc.unilock.nilcord.discord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.IncomingWebhookClient;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageReference;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.WebhookClient;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -70,6 +65,8 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (server == null) return;
+
         if (CONFIG.formatting.minecraft.discord_message.value().isEmpty()) return;
 
         if (!event.isFromType(ChannelType.TEXT)) return;
@@ -120,7 +117,7 @@ public class Discord extends ListenerAdapter {
                 message
         );
 
-        if (CONFIG.minecraft.enable_everyone_and_here.value()) {
+        if (!CONFIG.minecraft.enable_everyone_and_here.value()) {
             msg = parseEveryoneAndHere(msg);
         }
         if (CONFIG.minecraft.enable_mentions.value()) {
@@ -147,7 +144,7 @@ public class Discord extends ListenerAdapter {
         if (textChannel != null) {
             textChannel.sendMessage(message).queue();
         } else {
-            LOGGER.error("Unable to find channel "+CONFIG.discord.channel_id.value()+"!");
+            LOGGER.error("Unable to find channel {}!", CONFIG.discord.channel_id.value());
         }
     }
 
@@ -178,8 +175,11 @@ public class Discord extends ListenerAdapter {
     private String parseMentions(String message) {
         String msg = message;
 
-        for (Member member : jda.getTextChannelById(CONFIG.discord.channel_id.value()).getMembers()) {
-            message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+        TextChannel textChannel = jda.getTextChannelById(CONFIG.discord.channel_id.value());
+        if (textChannel != null) {
+            for (Member member : jda.getTextChannelById(CONFIG.discord.channel_id.value()).getMembers()) {
+                message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+            }
         }
 
         return message;
