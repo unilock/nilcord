@@ -3,9 +3,9 @@ package cc.unilock.nilcord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.ITextComponent;
 
 import java.time.Duration;
 

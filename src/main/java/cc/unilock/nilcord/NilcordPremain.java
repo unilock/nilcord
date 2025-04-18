@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Paths;
 
-@Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION, acceptableRemoteVersions = "*")
+@Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION, acceptableRemoteVersions = "*", dependencies = "required-after:mixinbooter;")
 public class NilcordPremain {
     public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_NAME);
 	public static final NilcordConfig CONFIG = NilcordConfig.createToml(Paths.get("config"), "", "nilcord", NilcordConfig.class);

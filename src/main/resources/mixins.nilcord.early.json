@@ -1,8 +1,13 @@
 {
-  "required": true,
-  "minVersion": "0.8.5-GTNH",
-  "package": "cc.unilock.nilcord.mixin.early",
-  "refmap": "mixins.nilcord.refmap.json",
-  "target": "@env(DEFAULT)",
-  "compatibilityLevel": "JAVA_8"
+	"package": "cc.unilock.nilcord.mixin.early",
+	"required": true,
+	"refmap": "mixins.${mod_id}.refmap.json",
+	"target": "@env(DEFAULT)",
+	"minVersion": "0.8.5",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"minecraft.CrashReportMixin"
+	],
+	"server": [],
+	"client": []
 }
