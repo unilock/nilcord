@@ -2,14 +2,7 @@ package cc.unilock.nilcord;
 
 import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
-import cc.unilock.nilcord.transformer.ClassReaderTransformer;
-import cc.unilock.nilcord.transformer.CrashReportTransformer;
-import cc.unilock.nilcord.transformer.DedicatedServerTransformer;
-import cc.unilock.nilcord.transformer.EntityPlayerTransformer;
-import cc.unilock.nilcord.transformer.EntityServerPlayerTransformer;
-import cc.unilock.nilcord.transformer.MinecraftServerTransformer;
-import cc.unilock.nilcord.transformer.NetServerHandlerTransformer;
-import cc.unilock.nilcord.transformer.ServerConfigurationManagerTransformer;
+import cc.unilock.nilcord.transformer.*;
 import net.minecraft.server.dedicated.DedicatedServer;
 import nilloader.api.ClassTransformer;
 import nilloader.api.ModRemapper;
