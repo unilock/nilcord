@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.10.+'
 	id 'maven-publish'
 }
 
@@ -37,16 +37,16 @@ dependencies {
 	}
 	implementation include("folk.sisby:kaleido-config:${project.kaleido_version}")
 
-	include("com.fasterxml.jackson.core:jackson-core:2.16.0")
-	include("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-	include("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
+	include("com.fasterxml.jackson.core:jackson-core:2.17.2")
+	include("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
+	include("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 	include("com.neovisionaries:nv-websocket-client:2.14")
 	include("com.squareup.okhttp3:okhttp:4.12.0")
-	include("com.squareup.okio:okio-jvm:3.9.0")
+	include("com.squareup.okio:okio-jvm:3.10.2")
 	include("net.sf.trove4j:trove4j:3.0.3")
 	include("org.apache.commons:commons-collections4:4.4")
-	include("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
-	include("org.slf4j:slf4j-api:2.0.12") // Use 2.0 instead of 1.0
+	include("org.jetbrains.kotlin:kotlin-stdlib:1.9.25")
+	include("org.slf4j:slf4j-api:2.0.13") // Use 2.0 instead of 1.0
 }
 
 processResources {

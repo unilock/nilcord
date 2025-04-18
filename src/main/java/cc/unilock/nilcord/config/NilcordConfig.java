@@ -56,6 +56,10 @@ public class NilcordConfig extends ReflectiveConfig {
             @Comment("Available placeholders: N/A")
             public final TrackedValue<String> server_stop_message = value("**Server stopped!**");
 
+            @Comment("Server crash message")
+            @Comment("Available placeholders: N/A")
+            public final TrackedValue<String> server_crash_message = value("**Server crashed :(**");
+
             @Comment("Player chat messages")
             @Comment("Additional placeholders: <message>")
             public final TrackedValue<String> chat_message = value("**<<username>>** <message>");
