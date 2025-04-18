@@ -19,6 +19,7 @@ public class EarlyMixinLoader implements IFMLLoadingPlugin, IEarlyMixinLoader {
     public List<String> getMixins(Set<String> loadedCoreMods) {
         List<String> mixins = new ArrayList<>();
         mixins.add("minecraft.AchievementAccessor");
+        mixins.add("minecraft.CrashReportMixin");
         mixins.add("minecraft.StatBaseAccessor");
         return mixins;
     }
