@@ -7,12 +7,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.File;
-
 @Mixin(CrashReport.class)
 public class CrashReportMixin {
-    @Inject(method = "writeToFile", at = @At("HEAD"))
-    private void writeToFile(File file, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "writeToFile(Ljava/nio/file/Path;Lnet/minecraft/util/crash/ReportType;Ljava/util/List;)Z", at = @At("HEAD"))
+    private void writeToFile(CallbackInfoReturnable<Boolean> cir) {
         NilcordPremain.listener.serverCrash((CrashReport) (Object) this);
     }
 }
