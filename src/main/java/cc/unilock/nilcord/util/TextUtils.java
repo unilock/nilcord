@@ -27,13 +27,13 @@ public class TextUtils {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
-                .replace("<role_color>", ColorUtils.getHexColor(member))
+                .replace("<role_color>", member == null ? ColorUtils.WHITE : ColorUtils.getHexColor(member))
                 .replace("<message_url>", message.getJumpUrl());
 
         Map<String, Text> placeholders = Map.of(
                 "reply_format", replyChunk,
                 "username", Text.literal(author.getName()),
-                "nickname", Text.literal(member.getEffectiveName()),
+                "nickname", Text.literal(member == null ? author.getEffectiveName() : member.getEffectiveName()),
                 "message", MarkdownLiteParserV1.ALL.parseText(message.getContentDisplay(), ParserContext.of())
         );
 
