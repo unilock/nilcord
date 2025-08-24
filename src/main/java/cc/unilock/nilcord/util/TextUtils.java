@@ -17,11 +17,11 @@ public class TextUtils {
         return template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
-                .replace("<role_color>", ColorUtils.getHexColor(member))
+                .replace("<role_color>", member == null ? ColorUtils.WHITE : ColorUtils.getHexColor(member))
                 .replace("<message_url>", message.getJumpUrl())
                 .replace("<reply_format>", replyChunk)
                 .replace("<username>", author.getName())
-                .replace("<nickname>", member.getEffectiveName())
+                .replace("<nickname>", member == null ? author.getEffectiveName() : member.getEffectiveName())
                 .replace("<message>", message.getContentDisplay());
     }
 

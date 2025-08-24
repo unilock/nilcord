@@ -71,6 +71,8 @@ public class Discord extends ListenerAdapter {
         if (!event.isFromType(ChannelType.TEXT)) return;
         if (!event.getChannel().asTextChannel().getId().equals(CONFIG.discord.channel_id.value())) return;
 
+        if (!CONFIG.minecraft.show_webhook_messages.value() && event.isWebhookMessage()) return;
+
         User author = event.getAuthor();
         if (!CONFIG.minecraft.show_bot_messages.value() && author.isBot()) return;
         if (author.getId().equals(this.jda.getSelfUser().getId()) || author.getId().equals(this.webhookId)) return;
@@ -79,7 +81,6 @@ public class Discord extends ListenerAdapter {
         MessageReference ref = message.getMessageReference();
 
         Member member = message.getMember();
-        if (member == null) return;
 
         StringBuilder attachment_chunk = new StringBuilder(message.getContentDisplay().isEmpty() ? "" : " ");
         if (CONFIG.minecraft.show_attachments.value()) {

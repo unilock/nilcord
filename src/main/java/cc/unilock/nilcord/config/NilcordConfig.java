@@ -39,6 +39,9 @@ public class NilcordConfig extends ReflectiveConfig {
 
         @Comment("Whether to show messages from other Discord bots in-game")
         public final TrackedValue<Boolean> show_bot_messages = value(Boolean.FALSE);
+
+        @Comment("Whether to show messages from Discord webhooks in-game")
+        public final TrackedValue<Boolean> show_webhook_messages = value(Boolean.TRUE);
     }
 
     @Comment("Settings pertaining to message formatting")
