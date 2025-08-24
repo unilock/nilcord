@@ -30,13 +30,13 @@ public class TextUtils {
         template = template
                 .replace("<attachment_format>", attachmentChunk)
                 .replace("<username_format>", usernameChunk)
-                .replace("<role_color>", ColorUtils.getHexColor(member))
+                .replace("<role_color>", member == null ? ColorUtils.WHITE : ColorUtils.getHexColor(member))
                 .replace("<message_url>", message.getJumpUrl());
 
         Function<String, Text> placeholders = str -> switch (str) {
             case "reply_format" -> replyChunk;
             case "username" -> Text.literal(author.getName());
-            case "nickname" -> Text.literal(member.getEffectiveName());
+            case "nickname" -> Text.literal(member == null ? author.getEffectiveName() : member.getEffectiveName());
             case "message" -> MarkdownLiteParserV1.ALL.parseText(message.getContentDisplay(), ParserContext.of());
             default -> null;
         };
