@@ -75,6 +75,7 @@ public class Discord extends ListenerAdapter {
 
         User author = event.getAuthor();
         if (!CONFIG.minecraft.show_bot_messages.value() && author.isBot()) return;
+        if (CONFIG.minecraft.ignored_ids.value().contains(author.getId())) return;
         if (author.getId().equals(this.jda.getSelfUser().getId()) || author.getId().equals(this.webhookId)) return;
 
         Message message = event.getMessage();
