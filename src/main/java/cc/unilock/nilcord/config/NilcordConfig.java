@@ -3,6 +3,7 @@ package cc.unilock.nilcord.config;
 import folk.sisby.kaleido.api.ReflectiveConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
+import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 
 public class NilcordConfig extends ReflectiveConfig {
     @Comment("Settings pertaining to Discord itself")
@@ -42,6 +43,9 @@ public class NilcordConfig extends ReflectiveConfig {
 
         @Comment("Whether to show messages from Discord webhooks in-game")
         public final TrackedValue<Boolean> show_webhook_messages = value(Boolean.TRUE);
+
+        @Comment("Application / User IDs to ignore messages from")
+        public final TrackedValue<ValueList<String>> ignored_ids = list("000000000000000000");
     }
 
     @Comment("Settings pertaining to message formatting")
