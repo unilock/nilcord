@@ -94,8 +94,11 @@ public class NilcordConfig extends ReflectiveConfig {
             public final WebhookFormatting webhook = new WebhookFormatting();
             public static final class WebhookFormatting extends Section {
                 @Comment("The URL to use for the webhook's avatar")
-                @Comment("Additional placeholders: <uuid>")
-                public final TrackedValue<String> avatar_url = value("https://visage.surgeplay.com/bust/128/<uuid>");
+                @Comment("Additional placeholders: <skin_id> <uuid>")
+                public final TrackedValue<String> avatar_url = value("https://visage.surgeplay.com/bust/128/<skin_id>");
+
+                @Comment("Default skin ID for the webhook's avatar, if the player's cannot be loaded")
+                public final TrackedValue<String> default_skin_id = value("31f477eb1a7beee631c2ca64d06f8f68fa93a3386d04452ab27f43acdf1b60cb"); // X-Steve
 
                 @Comment("The webhook's username")
                 @Comment("Additional placeholders: N/A")

@@ -3,7 +3,12 @@ package cc.unilock.nilcord.discord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.IncomingWebhookClient;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.WebhookClient;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -22,7 +27,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cc.unilock.nilcord.NilcordPremain.*;
+import static cc.unilock.nilcord.NilcordPremain.CONFIG;
+import static cc.unilock.nilcord.NilcordPremain.LOGGER;
+import static cc.unilock.nilcord.NilcordPremain.server;
 
 public class Discord extends ListenerAdapter {
     private static final Pattern WEBHOOK_ID_REGEX = Pattern.compile("^https://discord\\.com/api/webhooks/(\\d+)/.+$");
@@ -151,7 +158,7 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendWebhookMessageToDiscord(String message, ServerPlayerEntity player) {
-        String avatar = TextUtils.parsePlayer(
+        String avatar = TextUtils.parseAvatar(
                 CONFIG.formatting.discord.webhook.avatar_url.value(),
                 player
         ).getString();

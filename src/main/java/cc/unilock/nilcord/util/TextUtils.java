@@ -1,7 +1,7 @@
 package cc.unilock.nilcord.util;
 
+import com.google.common.base.CharMatcher;
 import eu.pb4.placeholders.api.ParserContext;
-import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
 import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
@@ -11,10 +11,15 @@ import net.dv8tion.jda.api.entities.User;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class TextUtils {
@@ -65,12 +70,39 @@ public class TextUtils {
                 "uuid", Text.literal(player.getGameProfile().getId().toString())
         );
 
-        return Placeholders.parseText(Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders), PlaceholderContext.of(player));
+        return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
+    }
+
+    public static Text parseAvatar(String template, ServerPlayerEntity player) {
+        Map<String, Text> placeholders = Map.of(
+                "skin_id", Text.literal(SkinUtils.getSkin(player.getGameProfile())),
+                "uuid", Text.literal(player.getGameProfile().getId().toString())
+        );
+
+        return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
     }
 
     public static Text parseMessage(String template, ServerPlayerEntity player, Text message) {
+        MutableText unspoiled = MutableText.of(PlainTextContent.EMPTY);
+
+        message.visit((style, literal) -> {
+            if (CharMatcher.is(literal.charAt(0)).matchesAllOf(literal.substring(1))) {
+                HoverEvent hover = style.getHoverEvent();
+                if (hover != null && HoverEvent.Action.SHOW_TEXT.equals(hover.getAction())) {
+                    Text hoverText = hover.getValue(HoverEvent.Action.SHOW_TEXT);
+                    if (hoverText != null) {
+                        unspoiled.append("||"+hoverText.getString()+"||");
+                        return Optional.empty();
+                    }
+                }
+            }
+
+            unspoiled.append(literal);
+            return Optional.empty();
+        }, Style.EMPTY);
+
         Map<String, Text> placeholders = Map.of(
-                "message", message
+                "message", unspoiled
         );
 
         return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
