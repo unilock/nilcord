@@ -1,5 +1,6 @@
 package cc.unilock.nilcord.util;
 
+import com.google.common.base.CharMatcher;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.node.TextNode;
@@ -13,9 +14,14 @@ import net.dv8tion.jda.api.entities.User;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class TextUtils {
@@ -73,9 +79,35 @@ public class TextUtils {
         return TagLikeParser.placeholderText(TagLikeParser.TAGS, placeholders).parseText(PARSER.parseNode(template), PlaceholderContext.of(player).asParserContext());
     }
 
-    public static Text parseMessage(String template, ServerPlayerEntity player, Text message) {
+    public static Text parseAvatar(String template, ServerPlayerEntity player) {
         Function<String, Text> placeholders = str -> switch (str) {
-            case "message" -> message;
+                case "skin_id" -> Text.literal(SkinUtils.getSkin(player.getGameProfile()));
+                case "uuid" -> Text.literal(player.getGameProfile().getId().toString());
+                default -> null;
+        };
+
+        return TagLikeParser.placeholderText(TagLikeParser.TAGS, placeholders).parseText(TextNode.convert(parsePlayer(template, player)), ParserContext.of());
+    }
+
+    public static Text parseMessage(String template, ServerPlayerEntity player, Text message) {
+        MutableText unspoiled = MutableText.of(PlainTextContent.EMPTY);
+
+        message.visit((style, literal) -> {
+            if (CharMatcher.is(literal.charAt(0)).matchesAllOf(literal.substring(1))) {
+                if (style.getHoverEvent() instanceof HoverEvent.ShowText(Text hoverText)) {
+                    if (hoverText != null) {
+                        unspoiled.append("||"+ hoverText.getString()+"||");
+                        return Optional.empty();
+                    }
+                }
+            }
+
+            unspoiled.append(literal);
+            return Optional.empty();
+        }, Style.EMPTY);
+
+        Function<String, Text> placeholders = str -> switch (str) {
+            case "message" -> unspoiled;
             default -> null;
         };
 
