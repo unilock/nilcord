@@ -80,8 +80,11 @@ public class TextUtils {
     }
 
     public static Text parseAvatar(String template, ServerPlayerEntity player) {
+        SkinUtils.Skin skin = SkinUtils.getSkin(player.getGameProfile());
+
         Function<String, Text> placeholders = str -> switch (str) {
-                case "skin_id" -> Text.literal(SkinUtils.getSkin(player.getGameProfile()));
+                case "skin_id" -> Text.literal(skin.id());
+                case "skin_model" -> Text.literal(skin.model());
                 case "uuid" -> Text.literal(player.getGameProfile().getId().toString());
                 default -> null;
         };
