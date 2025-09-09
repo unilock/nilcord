@@ -74,8 +74,11 @@ public class TextUtils {
     }
 
     public static Text parseAvatar(String template, ServerPlayerEntity player) {
+        SkinUtils.Skin skin = SkinUtils.getSkin(player.getGameProfile());
+
         Map<String, Text> placeholders = Map.of(
-                "skin_id", Text.literal(SkinUtils.getSkin(player.getGameProfile())),
+                "skin_id", Text.literal(skin.id()),
+                "skin_model", Text.literal(skin.model()),
                 "uuid", Text.literal(player.getGameProfile().getId().toString())
         );
 
