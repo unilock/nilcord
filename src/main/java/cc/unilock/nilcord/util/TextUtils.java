@@ -64,9 +64,9 @@ public class TextUtils {
 
     public static Text parsePlayer(String template, ServerPlayerEntity player) {
         Function<String, Text> placeholders = str -> switch (str) {
-            case "displayname" -> Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().getName()));
-            case "username" -> Text.literal(player.getGameProfile().getName());
-            case "uuid" -> Text.literal(player.getGameProfile().getId().toString());
+            case "displayname" -> Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().name()));
+            case "username" -> Text.literal(player.getGameProfile().name());
+            case "uuid" -> Text.literal(player.getGameProfile().id().toString());
             default -> null;
         };
 
