@@ -2,6 +2,7 @@ package cc.unilock.nilcord.util;
 
 import com.google.common.base.CharMatcher;
 import eu.pb4.placeholders.api.ParserContext;
+import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
 import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
@@ -66,11 +67,10 @@ public class TextUtils {
     public static Text parsePlayer(String template, ServerPlayerEntity player) {
         Map<String, Text> placeholders = Map.of(
                 "displayname", Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().getName())),
-                "username", Text.literal(player.getGameProfile().getName()),
-                "uuid", Text.literal(player.getGameProfile().getId().toString())
+                "username", Text.literal(player.getGameProfile().getName())
         );
 
-        return Placeholders.parseText(parsePlayer(template, player), ANGLE_BRACKETS, placeholders);
+        return Placeholders.parseText(Placeholders.parseText(parse(template), ANGLE_BRACKETS, placeholders), PlaceholderContext.of(player));
     }
 
     public static Text parseAvatar(String template, ServerPlayerEntity player) {
