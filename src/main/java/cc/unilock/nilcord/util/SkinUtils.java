@@ -11,9 +11,10 @@ public class SkinUtils {
         MinecraftProfileTextures mpt = NilcordPremain.server.getSessionService().getTextures(profile);
 
         if (mpt.skin() != null) {
+            String model = mpt.skin().getMetadata("model");
             return new Skin(
                     mpt.skin().getUrl().substring(38),
-                    mpt.skin().getMetadata("model")
+                    model == null ? CONFIG.formatting.discord.webhook.default_skin_model.value() : model
             );
         } else {
             return new Skin(
