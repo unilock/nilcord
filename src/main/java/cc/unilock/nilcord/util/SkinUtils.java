@@ -14,10 +14,11 @@ public class SkinUtils {
 
         if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
             MinecraftProfileTexture skin = map.get(MinecraftProfileTexture.Type.SKIN);
-           return new Skin(
-                   skin.getUrl().substring(38),
-                   skin.getMetadata("model")
-           );
+            String model = skin.getMetadata("model");
+            return new Skin(
+                    skin.getUrl().substring(38),
+                    model == null ? CONFIG.formatting.discord.webhook.default_skin_model.value() : model
+            );
         } else {
             return new Skin(
                     CONFIG.formatting.discord.webhook.default_skin_id.value(),
