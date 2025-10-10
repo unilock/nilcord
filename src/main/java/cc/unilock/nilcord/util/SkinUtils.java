@@ -8,7 +8,7 @@ import static cc.unilock.nilcord.NilcordPremain.CONFIG;
 
 public class SkinUtils {
     public static Skin getSkin(GameProfile profile) {
-        MinecraftProfileTextures mpt = NilcordPremain.server.getSessionService().getTextures(profile);
+        MinecraftProfileTextures mpt = NilcordPremain.server.getApiServices().sessionService().getTextures(profile);
 
         if (mpt.skin() != null) {
             String model = mpt.skin().getMetadata("model");

@@ -14,11 +14,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -70,9 +66,9 @@ public class TextUtils {
 
     public static Text parsePlayer(String template, ServerPlayerEntity player) {
         Function<String, Text> placeholders = str -> switch (str) {
-            case "displayname" -> Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().getName()));
-            case "username" -> Text.literal(player.getGameProfile().getName());
-            case "uuid" -> Text.literal(player.getGameProfile().getId().toString());
+            case "displayname" -> Objects.requireNonNullElse(player.getDisplayName(), Text.literal(player.getGameProfile().name()));
+            case "username" -> Text.literal(player.getGameProfile().name());
+            case "uuid" -> Text.literal(player.getGameProfile().id().toString());
             default -> null;
         };
 
@@ -85,7 +81,7 @@ public class TextUtils {
         Function<String, Text> placeholders = str -> switch (str) {
                 case "skin_id" -> Text.literal(skin.id());
                 case "skin_model" -> Text.literal(skin.model());
-                case "uuid" -> Text.literal(player.getGameProfile().getId().toString());
+                case "uuid" -> Text.literal(player.getGameProfile().id().toString());
                 default -> null;
         };
 
