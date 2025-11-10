@@ -3,12 +3,7 @@ package cc.unilock.nilcord.discord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.IncomingWebhookClient;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageReference;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.WebhookClient;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -24,12 +19,11 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cc.unilock.nilcord.NilcordPremain.CONFIG;
-import static cc.unilock.nilcord.NilcordPremain.LOGGER;
-import static cc.unilock.nilcord.NilcordPremain.server;
+import static cc.unilock.nilcord.NilcordPremain.*;
 
 public class Discord extends ListenerAdapter {
     private static final Pattern WEBHOOK_ID_REGEX = Pattern.compile("^https://discord\\.com/api/webhooks/(\\d+)/.+$");
@@ -37,6 +31,8 @@ public class Discord extends ListenerAdapter {
     private final JDA jda;
     private final IncomingWebhookClient webhook;
     private final String webhookId;
+
+    private boolean shutdown = false;
 
     public Discord() {
         JDABuilder builder = JDABuilder.createDefault(CONFIG.discord.token.value())
@@ -186,7 +182,7 @@ public class Discord extends ListenerAdapter {
 
         TextChannel textChannel = jda.getTextChannelById(CONFIG.discord.channel_id.value());
         if (textChannel != null) {
-            for (Member member : jda.getTextChannelById(CONFIG.discord.channel_id.value()).getMembers()) {
+            for (Member member : textChannel.getMembers()) {
                 message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
             }
         }
@@ -194,12 +190,27 @@ public class Discord extends ListenerAdapter {
         return message;
     }
 
-    public JDA getJda() {
-        return this.jda;
+    public void startJda() {
+        try {
+            this.jda.awaitReady();
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
     }
 
-    public void shutdown() {
-        this.jda.removeEventListener(this);
-        this.jda.shutdown();
+    public void stopJda() {
+        if (this.shutdown) return;
+        this.shutdown = true;
+
+        try {
+            this.jda.removeEventListener(this);
+            this.jda.shutdown();
+            if (!this.jda.awaitShutdown(Duration.ofSeconds(3))) {
+                LOGGER.error("JDA shutdown timeout exceeded! Shutting down now...");
+                this.jda.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
     }
 }
