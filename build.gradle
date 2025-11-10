@@ -10,7 +10,7 @@ compileJava.options.encoding = 'UTF-8'
 
 archivesBaseName = 'nilcord'
 group = 'cc.unilock'
-version = '2.8.0'
+version = '2.8.0.1'
 
 repositories {
 	mavenLocal()
@@ -58,8 +58,27 @@ shadowJar {
 	configurations = [project.configurations.shade]
 
 	exclude 'LICENSE'
-	exclude 'META-INF/**'
 	exclude 'module-info.class'
+
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/proguard/**'
+    exclude 'META-INF/services/**'
+    exclude 'META-INF/versions/**'
+
+    exclude 'META-INF/FastDoubleParser-LICENSE'
+    exclude 'META-INF/FastDoubleParser-NOTICE'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/MANIFEST.MF'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/kotlin-stdlib-common.kotlin_module'
+    exclude 'META-INF/kotlin-stdlib-jdk7.kotlin_module'
+    exclude 'META-INF/kotlin-stdlib-jdk8.kotlin_module'
+    exclude 'META-INF/kotlin-stdlib.kotlin_module'
+    exclude 'META-INF/okhttp.kotlin_module'
+    exclude 'META-INF/okio.kotlin_module'
+    exclude 'META-INF/thirdparty-LICENSE'
 
 	relocate 'com.fasterxml.jackson', 'cc.unilock.nilcord.lib.jackson'
 	relocate 'com.google.crypto', 'cc.unilock.nilcord.lib.crypto'
