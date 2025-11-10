@@ -8,8 +8,6 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Translate;
 
-import java.util.regex.Pattern;
-
 public class TextUtils {
     public static String parseDiscordMessage(String template, String attachmentChunk, String replyChunk, String usernameChunk, User author, Member member, Message message) {
         return template

@@ -3,47 +3,47 @@ package cc.unilock.nilcord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityServerPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.DamageSource;
 
-import java.time.Duration;
-
 import static cc.unilock.nilcord.NilcordPremain.CONFIG;
-import static cc.unilock.nilcord.NilcordPremain.LOGGER;
 
 public class EventListener {
+    private boolean crash = false;
+
+    public void serverInit() {
+        NilcordPremain.discord.startJda();
+
+        if (!CONFIG.formatting.discord.server_init_message.value().isEmpty()) {
+            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_init_message.value());
+        }
+    }
+
     public void serverStart() {
-        NilcordPremain.server = (DedicatedServer) MinecraftServer.getServer();
-        try {
-            NilcordPremain.discord.getJda().awaitReady();
-            if (!CONFIG.formatting.discord.server_start_message.value().isEmpty()) {
-                NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
-            }
-        } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+        if (!CONFIG.formatting.discord.server_start_message.value().isEmpty()) {
+            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
         }
     }
 
     public void serverStop() {
-        try {
-            if (!CONFIG.formatting.discord.server_stop_message.value().isEmpty()) {
-                NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
-            }
-            NilcordPremain.discord.shutdown();
-            NilcordPremain.discord.getJda().awaitShutdown(Duration.ofSeconds(3));
-        } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+        if (this.crash) return;
+
+        if (!CONFIG.formatting.discord.server_stop_message.value().isEmpty()) {
+            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
         }
-        NilcordPremain.server = null;
+
+        NilcordPremain.discord.stopJda();
     }
 
     // TODO: upload report.getCompleteReport() to mclogs or something (configurable)
     public void serverCrash(CrashReport report) {
-        if (CONFIG.formatting.discord.server_crash_message.value().isEmpty()) return;
+        this.crash = true;
 
-        NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
+        if (!CONFIG.formatting.discord.server_crash_message.value().isEmpty()) {
+            NilcordPremain.discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
+        }
+
+        NilcordPremain.discord.stopJda();
     }
 
     public void playerChatMessage(EntityServerPlayer player, String message) {

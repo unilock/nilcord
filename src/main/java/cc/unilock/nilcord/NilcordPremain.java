@@ -3,6 +3,7 @@ package cc.unilock.nilcord;
 import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
 import cc.unilock.nilcord.transformer.*;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import nilloader.api.ClassTransformer;
 import nilloader.api.ModRemapper;
@@ -40,5 +41,6 @@ public class NilcordPremain implements Runnable {
 	public static void initialize() {
 		discord = new Discord();
 		listener = new EventListener();
+		server = (DedicatedServer) MinecraftServer.getServer();
 	}
 }

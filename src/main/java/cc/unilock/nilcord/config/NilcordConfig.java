@@ -55,6 +55,10 @@ public class NilcordConfig extends ReflectiveConfig {
         @Comment("Available placeholders: <username>")
         public final DiscordFormatting discord = new DiscordFormatting();
         public static final class DiscordFormatting extends Section {
+            @Comment("Server init message")
+            @Comment("Available placeholders: N/A")
+            public final TrackedValue<String> server_init_message = value("**Server starting...**");
+
             @Comment("Server start message")
             @Comment("Available placeholders: N/A")
             public final TrackedValue<String> server_start_message = value("**Server started!**");
