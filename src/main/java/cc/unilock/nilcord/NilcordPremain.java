@@ -26,8 +26,11 @@ public class NilcordPremain implements ModInitializer {
         listener = new EventListener();
 
         // Server starting / stopping events
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             NilcordPremain.server = server;
+            listener.serverInit();
+        });
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             listener.serverStart();
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {

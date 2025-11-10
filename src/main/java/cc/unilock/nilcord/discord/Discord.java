@@ -19,6 +19,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,8 @@ public class Discord extends ListenerAdapter {
     private final JDA jda;
     private final IncomingWebhookClient webhook;
     private final String webhookId;
+
+    private boolean shutdown = false;
 
     public Discord() {
         JDABuilder builder = JDABuilder.createDefault(CONFIG.discord.token.value())
@@ -187,12 +190,27 @@ public class Discord extends ListenerAdapter {
         return message;
     }
 
-    public JDA getJda() {
-        return this.jda;
+    public void startJda() {
+        try {
+            this.jda.awaitReady();
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
     }
 
-    public void shutdown() {
-        this.jda.removeEventListener(this);
-        this.jda.shutdown();
+    public void stopJda() {
+        if (this.shutdown) return;
+        this.shutdown = true;
+
+        try {
+            this.jda.removeEventListener(this);
+            this.jda.shutdown();
+            if (!this.jda.awaitShutdown(Duration.ofSeconds(3))) {
+                LOGGER.error("JDA shutdown timeout exceeded! Shutting down now...");
+                this.jda.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
     }
 }
