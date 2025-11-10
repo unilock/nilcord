@@ -150,7 +150,7 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendWebhookMessageToDiscord(String message, EntityServerPlayer player) {
-        String avatar = TextUtils.parsePlayer(
+        String avatar = TextUtils.parseAvatar(
                 CONFIG.formatting.discord.webhook.avatar_url.value(),
                 player
         );

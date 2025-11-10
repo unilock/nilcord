@@ -11,8 +11,6 @@ import net.minecraft.util.Translate;
 import java.util.regex.Pattern;
 
 public class TextUtils {
-    private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile('§' + "[0-9A-FK-OR]", Pattern.CASE_INSENSITIVE);
-
     public static String parseDiscordMessage(String template, String attachmentChunk, String replyChunk, String usernameChunk, User author, Member member, Message message) {
         return template
                 .replace("<attachment_format>", attachmentChunk)
@@ -42,6 +40,10 @@ public class TextUtils {
                 .replace("<username>", player.username);
     }
 
+	public static String parseAvatar(String template, EntityServerPlayer player) {
+		return parsePlayer(template, player);
+	}
+
     public static String parseMessage(String template, EntityServerPlayer player, String message) {
         return parsePlayer(template, player)
                 .replace("<message>", message);
@@ -60,9 +62,5 @@ public class TextUtils {
     public static String parseDeath(String template, EntityServerPlayer player, DamageSource source) {
         return parsePlayer(template, player)
                 .replace("<death_message>", Translate.format(source.getDeathMessage(player)));
-    }
-
-    public static String stripControlCodes(String text) {
-        return FORMATTING_CODE_PATTERN.matcher(text).replaceAll("");
     }
 }
