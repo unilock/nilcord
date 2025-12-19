@@ -7,7 +7,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.crash.CrashReport;
-import net.minecraft.world.GameRules;
+import net.minecraft.world.rule.GameRules;
 
 import static cc.unilock.nilcord.NilcordPremain.CONFIG;
 
@@ -81,7 +81,7 @@ public class EventListener {
         if (player.getAdvancementTracker().getProgress(advancement).isDone()
                 && display != null
                 && display.shouldAnnounceToChat()
-                && player.getEntityWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)
+                && player.getEntityWorld().getGameRules().getValue(GameRules.ANNOUNCE_ADVANCEMENTS)
         ) {
             String template = switch (display.getFrame()) {
                 case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
