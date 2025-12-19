@@ -3,7 +3,7 @@
 	"id": "nilcord",
 	"version": "${version}",
 	"name": "Nilcord",
-	"description": "A Discord bridge for Minecraft 1.21.9 and above(?) using Fabric.",
+	"description": "A Discord bridge for Minecraft 1.21.11 and above(?) using Fabric.",
 	"authors": [
 		"unilock"
 	],
@@ -22,7 +22,7 @@
 	],
 	"depends": {
 		"fabricloader": "*",
-		"minecraft": ">=1.21.9",
+		"minecraft": ">=1.21.11",
 		"fabric-api": "*"
 	}
 }
