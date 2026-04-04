@@ -1,14 +1,13 @@
 package cc.unilock.nilcord;
 
 import cc.unilock.nilcord.util.TextUtils;
-import net.minecraft.advancement.AdvancementDisplay;
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.world.rule.GameRules;
-
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.CrashReport;
+import net.minecraft.world.level.gamerules.GameRules;
 import static cc.unilock.nilcord.NilcordPremain.CONFIG;
 
 public class EventListener {
@@ -49,13 +48,13 @@ public class EventListener {
         NilcordPremain.discord.stopJda();
     }
 
-    public void playerChatMessage(ServerPlayerEntity player, Text message) {
+    public void playerChatMessage(ServerPlayer player, Component message) {
         if (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isBlank() : CONFIG.formatting.discord.chat_message.value().isBlank()) return;
 
         NilcordPremain.discord.onPlayerChatMessage(player, message);
     }
 
-    public void playerJoin(ServerPlayerEntity player) {
+    public void playerJoin(ServerPlayer player) {
         if (CONFIG.formatting.discord.join_message.value().isBlank()) return;
 
         String message = TextUtils.parsePlayer(
@@ -65,7 +64,7 @@ public class EventListener {
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerLeave(ServerPlayerEntity player) {
+    public void playerLeave(ServerPlayer player) {
         if (CONFIG.formatting.discord.leave_message.value().isBlank()) return;
 
         String message = TextUtils.parsePlayer(
@@ -75,15 +74,15 @@ public class EventListener {
         NilcordPremain.discord.sendMessageToDiscord(message);
     }
 
-    public void playerAdvancement(ServerPlayerEntity player, AdvancementEntry advancement) {
-        AdvancementDisplay display = advancement.value().display().orElse(null);
+    public void playerAdvancement(ServerPlayer player, AdvancementHolder advancement) {
+        DisplayInfo display = advancement.value().display().orElse(null);
 
-        if (player.getAdvancementTracker().getProgress(advancement).isDone()
+        if (player.getAdvancements().getOrStartProgress(advancement).isDone()
                 && display != null
-                && display.shouldAnnounceToChat()
-                && player.getEntityWorld().getGameRules().getValue(GameRules.ANNOUNCE_ADVANCEMENTS)
+                && display.shouldAnnounceChat()
+                && player.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)
         ) {
-            String template = switch (display.getFrame()) {
+            String template = switch (display.getType()) {
                 case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
                 case GOAL -> CONFIG.formatting.discord.advancement_goal_message.value();
                 case TASK -> CONFIG.formatting.discord.advancement_task_message.value();
@@ -101,7 +100,7 @@ public class EventListener {
         }
     }
 
-    public void playerDeath(ServerPlayerEntity player, DamageSource source) {
+    public void playerDeath(ServerPlayer player, DamageSource source) {
         if (CONFIG.formatting.discord.death_message.value().isBlank()) return;
 
         String message = TextUtils.parseDeath(
