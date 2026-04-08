@@ -14,8 +14,8 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +94,7 @@ public class Discord extends ListenerAdapter {
             }
         }
 
-        Text reply_chunk = Text.empty();
+        Component reply_chunk = Component.empty();
         if (ref != null) {
             reply_chunk = TextUtils.parseDiscordReply(
                     CONFIG.formatting.minecraft.reply_format.value(),
@@ -102,7 +102,7 @@ public class Discord extends ListenerAdapter {
             );
         }
 
-        Text msg = TextUtils.parseDiscordMessage(
+        Component msg = TextUtils.parseDiscordMessage(
                 CONFIG.formatting.minecraft.discord_message.value(),
                 attachment_chunk.toString(),
                 reply_chunk,
@@ -112,10 +112,10 @@ public class Discord extends ListenerAdapter {
                 message
         );
 
-        server.getPlayerManager().broadcast(msg, false);
+        server.getPlayerList().broadcastSystemMessage(msg, false);
     }
 
-    public void onPlayerChatMessage(ServerPlayerEntity player, Text message) {
+    public void onPlayerChatMessage(ServerPlayer player, Component message) {
         String msg = TextUtils.parseMessage(
                 CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value(),
                 player,
@@ -136,7 +136,7 @@ public class Discord extends ListenerAdapter {
         this.sendMessageToDiscord(message, null);
     }
 
-    public void sendMessageToDiscord(String message, @Nullable ServerPlayerEntity player) {
+    public void sendMessageToDiscord(String message, @Nullable ServerPlayer player) {
         if (!CONFIG.discord.webhook.enabled.value() || this.webhook == null || player == null) {
             sendBotMessageToDiscord(message);
         } else {
@@ -153,7 +153,7 @@ public class Discord extends ListenerAdapter {
         }
     }
 
-    public void sendWebhookMessageToDiscord(String message, ServerPlayerEntity player) {
+    public void sendWebhookMessageToDiscord(String message, ServerPlayer player) {
         String avatar = TextUtils.parseAvatar(
                 CONFIG.formatting.discord.webhook.avatar_url.value(),
                 player

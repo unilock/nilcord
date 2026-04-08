@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class NilcordPremain implements ModInitializer {
 
         // Player events
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> {
-            listener.playerChatMessage(sender, message.getContent());
+            listener.playerChatMessage(sender, message.decoratedContent());
         });
 //        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 //            listener.playerJoin(handler.getPlayer());
@@ -49,7 +49,7 @@ public class NilcordPremain implements ModInitializer {
             listener.playerLeave(handler.getPlayer());
         });
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
-            if (entity instanceof ServerPlayerEntity spe) {
+            if (entity instanceof ServerPlayer spe) {
                 listener.playerDeath(spe, damageSource);
             }
         });

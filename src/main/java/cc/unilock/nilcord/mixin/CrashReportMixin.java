@@ -1,7 +1,7 @@
 package cc.unilock.nilcord.mixin;
 
 import cc.unilock.nilcord.NilcordPremain;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.CrashReport;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,11 +15,11 @@ import java.nio.file.Path;
 public class CrashReportMixin {
     @Shadow
     @Nullable
-    private Path file;
+    private Path saveFile;
 
-    @Inject(method = "writeToFile(Ljava/nio/file/Path;Lnet/minecraft/util/crash/ReportType;Ljava/util/List;)Z", at = @At("HEAD"))
+    @Inject(method = "saveToFile(Ljava/nio/file/Path;Lnet/minecraft/ReportType;Ljava/util/List;)Z", at = @At("HEAD"))
     private void writeToFile(CallbackInfoReturnable<Boolean> cir) {
-        if (this.file == null) {
+        if (this.saveFile == null) {
             NilcordPremain.listener.serverCrash((CrashReport) (Object) this);
         }
     }
