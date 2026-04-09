@@ -1,0 +1,125 @@
+package cc.unilock.nilcord;
+
+import cc.unilock.nilcord.config.NilcordConfig;
+import cc.unilock.nilcord.discord.Discord;
+import cc.unilock.nilcord.platform.Services;
+import cc.unilock.nilcord.util.TextUtils;
+import net.minecraft.CrashReport;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.level.gamerules.GameRules;
+
+public class Nilcord {
+    public static final NilcordConfig CONFIG = NilcordConfig.createToml(Services.PLATFORM.getConfigDir(), "", Constants.MOD_ID, NilcordConfig.class);
+
+    public static Discord discord;
+    public static MinecraftServer server;
+
+    private static boolean crash = false;
+
+    public static void init() {
+        discord = new Discord();
+    }
+
+    public static void serverInit() {
+        discord.startJda();
+
+        if (!CONFIG.formatting.discord.server_init_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_init_message.value());
+        }
+    }
+
+    public static void serverStart() {
+        if (!CONFIG.formatting.discord.server_start_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
+        }
+    }
+
+    public static void serverStop() {
+        if (crash) return;
+
+        if (!CONFIG.formatting.discord.server_stop_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
+        }
+
+        discord.stopJda();
+    }
+
+    // TODO: upload report.asString() to mclogs or something (configurable)
+    public static void serverCrash(CrashReport report) {
+        crash = true;
+
+        if (!CONFIG.formatting.discord.server_crash_message.value().isEmpty()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
+        }
+
+        discord.stopJda();
+    }
+
+    public static void playerChatMessage(ServerPlayer player, Component message) {
+        if (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isBlank() : CONFIG.formatting.discord.chat_message.value().isBlank()) return;
+
+        discord.onPlayerChatMessage(player, message);
+    }
+
+    public static void playerJoin(ServerPlayer player) {
+        if (CONFIG.formatting.discord.join_message.value().isBlank()) return;
+
+        String message = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.join_message.value(),
+                player
+        ).getString();
+        discord.sendMessageToDiscord(message);
+    }
+
+    public static void playerLeave(ServerPlayer player) {
+        if (CONFIG.formatting.discord.leave_message.value().isBlank()) return;
+
+        String message = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.leave_message.value(),
+                player
+        ).getString();
+        discord.sendMessageToDiscord(message);
+    }
+
+    public static void playerAdvancement(ServerPlayer player, AdvancementHolder advancement) {
+        DisplayInfo display = advancement.value().display().orElse(null);
+
+        if (player.getAdvancements().getOrStartProgress(advancement).isDone()
+                && display != null
+                && display.shouldAnnounceChat()
+                && player.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)
+        ) {
+            String template = switch (display.getType()) {
+                case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
+                case GOAL -> CONFIG.formatting.discord.advancement_goal_message.value();
+                case TASK -> CONFIG.formatting.discord.advancement_task_message.value();
+                default -> CONFIG.formatting.discord.advancement_fallback_message.value();
+            };
+
+            if (template.isBlank()) return;
+
+            String message = TextUtils.parseAdvancement(
+                    template,
+                    player,
+                    display
+            ).getString();
+            discord.sendMessageToDiscord(message);
+        }
+    }
+
+    public static void playerDeath(ServerPlayer player, DamageSource source) {
+        if (CONFIG.formatting.discord.death_message.value().isBlank()) return;
+
+        String message = TextUtils.parseDeath(
+                CONFIG.formatting.discord.death_message.value(),
+                player,
+                source
+        ).getString();
+        discord.sendMessageToDiscord(message);
+    }
+}

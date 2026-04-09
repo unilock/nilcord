@@ -1,3 +1,3 @@
 # Nilcord
 
-A Discord bridge for Minecraft 1.21.5 and above(?) using Fabric.
+Yet another Discord bridge for Minecraft 26.1 and above. Now multiloader!
