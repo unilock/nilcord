@@ -4,8 +4,10 @@ plugins {
 }
 
 base {
-    archivesName = "${mod_id}-${project.name}-${minecraft_version}"
+    archivesName = mod_id
 }
+
+version = "${version}+${minecraft_version_base}+${project.name}"
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version)
@@ -59,6 +61,7 @@ processResources {
             'version'                      : version,
             'group'                        : project.group,
             'minecraft_version'            : minecraft_version,
+            'minecraft_version_base'       : minecraft_version_base,
             'minecraft_version_range'      : minecraft_version_range,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,
