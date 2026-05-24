@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
 @Mod(Constants.MOD_ID)
 public class NilcordNeoForge {
@@ -32,7 +32,7 @@ public class NilcordNeoForge {
             Nilcord.serverStart();
         }
         @SubscribeEvent
-        public void serverStopping(ServerStoppingEvent event) {
+        public void serverStopped(ServerStoppedEvent event) {
             Nilcord.serverStop();
             Nilcord.server = null;
         }

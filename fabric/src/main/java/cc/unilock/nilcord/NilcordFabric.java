@@ -17,10 +17,8 @@ public class NilcordFabric implements ModInitializer {
             Nilcord.server = server;
             Nilcord.serverInit();
         });
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            Nilcord.serverStart();
-        });
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> Nilcord.serverStart());
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             Nilcord.serverStop();
             Nilcord.server = null;
         });
@@ -29,12 +27,8 @@ public class NilcordFabric implements ModInitializer {
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> {
             Nilcord.playerChatMessage(sender, message.decoratedContent());
         });
-        ServerPlayerEvents.JOIN.register(player -> {
-            Nilcord.playerJoin(player);
-        });
-        ServerPlayerEvents.LEAVE.register(player -> {
-            Nilcord.playerLeave(player);
-        });
+        ServerPlayerEvents.JOIN.register(Nilcord::playerJoin);
+        ServerPlayerEvents.LEAVE.register(Nilcord::playerLeave);
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if (entity instanceof ServerPlayer player) {
                 Nilcord.playerDeath(player, damageSource);

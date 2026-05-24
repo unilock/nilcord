@@ -139,6 +139,10 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendMessageToDiscord(String message, @Nullable ServerPlayer player) {
+        if (this.shutdown) {
+            System.out.println("Dropping '" + message + "' because");
+        }
+
         if (!CONFIG.discord.webhook.enabled.value() || this.webhook == null || player == null) {
             sendBotMessageToDiscord(message);
         } else {
