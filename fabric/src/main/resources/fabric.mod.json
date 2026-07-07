@@ -7,6 +7,10 @@
     "authors": [
         "${mod_author}"
     ],
+    "contributors": [
+        "ThatCuteOne",
+        "wiidotmom"
+    ],
     "contact": {
         "homepage": "https://github.com/unilock/nilcord",
         "issues": "https://github.com/unilock/nilcord/issues",

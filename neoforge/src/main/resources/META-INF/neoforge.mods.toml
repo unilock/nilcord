@@ -9,7 +9,7 @@ version = "${version}"
 displayName = "${mod_name}"
 displayURL="https://github.com/unilock/nilcord"
 logoFile="${mod_id}.png"
-credits="${credits}"
+credits="ThatCuteOne, wiidotmom"
 authors = "${mod_author}"
 description = '''${description}'''
 
