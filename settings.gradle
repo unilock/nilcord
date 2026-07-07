@@ -21,6 +21,7 @@ plugins {
 }
 
 rootProject.name = 'nilcord'
+includeBuild('build-logic')
 include('common')
 include('fabric')
 include('neoforge')

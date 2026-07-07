@@ -15,16 +15,16 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    minecraft("com.mojang:minecraft:${minecraft_version}")
+    implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
 
-    implementation include("folk.sisby:kaleido-config:${kaleido_version}")
-    implementation include("eu.pb4:placeholder-api:${papi_fabric_version}")
+    include(implementation("folk.sisby:kaleido-config:${kaleido_version}"))
+    include(implementation("eu.pb4:placeholder-api:${papi_fabric_version}"))
 
-    implementation include("net.dv8tion:JDA:${jda_version}") {
+    include(implementation("net.dv8tion:JDA:${jda_version}") {
         exclude module: 'opus-java'
-    }
+    })
     include('com.fasterxml.jackson.core:jackson-core:2.21.2')
     include('com.fasterxml.jackson.core:jackson-annotations:2.21')
     include('com.fasterxml.jackson.core:jackson-databind:2.21.2')
@@ -60,7 +60,7 @@ loom {
 
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
 ['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
-    configurations.named("$variant") {
+    configurations.named(variant) {
         attributes {
             attribute(loaderAttribute, 'fabric')
         }
@@ -68,7 +68,7 @@ def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', Strin
 }
 sourceSets.configureEach {
     [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
-        configurations.named("$variant") {
+        configurations.named(variant) {
             attributes {
                 attribute(loaderAttribute, 'fabric')
             }
