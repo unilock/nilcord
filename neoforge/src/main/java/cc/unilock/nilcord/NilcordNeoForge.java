@@ -10,6 +10,7 @@ import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
 @Mod(Constants.MOD_ID)
@@ -23,17 +24,21 @@ public class NilcordNeoForge {
     private static class FMLEvents {
         // Server starting / stopping events
         @SubscribeEvent
-        public void serverInit(ServerStartingEvent event) {
+        public void serverStarting(ServerStartingEvent event) {
             Nilcord.server = event.getServer();
-            Nilcord.serverInit();
+            Nilcord.serverStarting();
         }
         @SubscribeEvent
         public void serverStarted(ServerStartedEvent event) {
-            Nilcord.serverStart();
+            Nilcord.serverStarted();
         }
         @SubscribeEvent
         public void serverStopping(ServerStoppingEvent event) {
-            Nilcord.serverStop();
+            Nilcord.serverStopping();
+        }
+        @SubscribeEvent
+        public void serverStopped(ServerStoppedEvent event) {
+            Nilcord.serverStopped();
             Nilcord.server = null;
         }
 

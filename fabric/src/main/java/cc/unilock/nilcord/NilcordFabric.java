@@ -15,13 +15,16 @@ public class NilcordFabric implements ModInitializer {
         // Server starting / stopping events
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             Nilcord.server = server;
-            Nilcord.serverInit();
+            Nilcord.serverStarting();
         });
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            Nilcord.serverStart();
+            Nilcord.serverStarted();
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            Nilcord.serverStop();
+            Nilcord.serverStopping();
+        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            Nilcord.serverStopped();
             Nilcord.server = null;
         });
 

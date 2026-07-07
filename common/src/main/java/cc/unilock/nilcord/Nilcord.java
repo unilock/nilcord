@@ -25,25 +25,33 @@ public class Nilcord {
         discord = new Discord();
     }
 
-    public static void serverInit() {
+    public static void serverStarting() {
         discord.startJda();
 
-        if (!CONFIG.formatting.discord.server_init_message.value().isBlank()) {
-            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_init_message.value());
+        if (!CONFIG.formatting.discord.server_starting_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_starting_message.value());
         }
     }
 
-    public static void serverStart() {
-        if (!CONFIG.formatting.discord.server_start_message.value().isBlank()) {
-            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_start_message.value());
+    public static void serverStarted() {
+        if (!CONFIG.formatting.discord.server_started_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_started_message.value());
         }
     }
 
-    public static void serverStop() {
+    public static void serverStopping() {
         if (crash) return;
 
-        if (!CONFIG.formatting.discord.server_stop_message.value().isBlank()) {
-            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stop_message.value());
+        if (!CONFIG.formatting.discord.server_stopping_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopping_message.value());
+        }
+    }
+
+    public static void serverStopped() {
+        if (crash) return;
+
+        if (!CONFIG.formatting.discord.server_stopped_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopped_message.value());
         }
 
         discord.stopJda();

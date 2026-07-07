@@ -139,6 +139,11 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendMessageToDiscord(String message, @Nullable ServerPlayer player) {
+        if (this.shutdown) {
+			Constants.LOG.error("Dropping message \"{}\" due to JDA shutdown!", message);
+            return;
+        }
+
         if (!CONFIG.discord.webhook.enabled.value() || this.webhook == null || player == null) {
             sendBotMessageToDiscord(message);
         } else {
@@ -182,14 +187,14 @@ public class Discord extends ListenerAdapter {
     private String parseMentions(String message) {
         String msg = message;
 
-        TextChannel textChannel = jda.getTextChannelById(CONFIG.discord.channel_id.value());
+        TextChannel textChannel = this.jda.getTextChannelById(CONFIG.discord.channel_id.value());
         if (textChannel != null) {
             for (Member member : textChannel.getMembers()) {
-                message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+                msg = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
             }
         }
 
-        return message;
+        return msg;
     }
 
     public void startJda() {
