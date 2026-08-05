@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import net.minecraft.entity.player.EntityServerPlayer;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
@@ -30,11 +30,11 @@ public class ServerConfigurationManagerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void join(EntityServerPlayer player) {
-			NilcordPremain.listener.playerJoin(player);
+			Nilcord.playerJoin(player);
 		}
 
 		public static void leave(EntityServerPlayer player) {
-			NilcordPremain.listener.playerLeave(player);
+			Nilcord.playerLeave(player);
 		}
 	}
 }

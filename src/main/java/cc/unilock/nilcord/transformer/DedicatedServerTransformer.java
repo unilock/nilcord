@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
 import nilloader.api.lib.mini.annotation.Patch;
@@ -11,24 +11,35 @@ public class DedicatedServerTransformer extends MiniTransformer {
 	public void patchStartServer(PatchContext ctx) {
 		ctx.jumpToStart();
 		ctx.add(
-				INVOKESTATIC("cc/unilock/nilcord/transformer/DedicatedServerTransformer$Hooks", "serverInit", "()V")
+				INVOKESTATIC("cc/unilock/nilcord/transformer/DedicatedServerTransformer$Hooks", "serverStarting", "()V")
 		);
 
 		ctx.jumpToLastReturn();
 		ctx.add(
-				INVOKESTATIC("cc/unilock/nilcord/transformer/DedicatedServerTransformer$Hooks", "serverStart", "()V")
+				INVOKESTATIC("cc/unilock/nilcord/transformer/DedicatedServerTransformer$Hooks", "serverStarted", "()V")
+		);
+	}
+
+	@Patch.Method("systemExitNow()V")
+	public void patchSystemExitNow(PatchContext ctx) {
+		ctx.jumpToStart();
+		ctx.add(
+				INVOKESTATIC("cc/unilock/nilcord/transformer/DedicatedServerTransformer$Hooks", "serverStopped", "()V")
 		);
 	}
 
 	public static class Hooks {
-		public static void serverInit() {
-			// Has to be done here, since Minecraft classes don't exist during nilmod init
-			NilcordPremain.initialize();
-			NilcordPremain.listener.serverInit();
+		public static void serverStarting() {
+			Nilcord.init();
+			Nilcord.serverStarting();
 		}
 
-		public static void serverStart() {
-			NilcordPremain.listener.serverStart();
+		public static void serverStarted() {
+			Nilcord.serverStarted();
+		}
+
+		public static void serverStopped() {
+			Nilcord.serverStopped();
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import net.minecraft.crash.CrashReport;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
@@ -20,7 +20,7 @@ public class CrashReportTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void serverCrash(CrashReport report) {
-			NilcordPremain.listener.serverCrash(report);
+			Nilcord.serverCrash(report);
 		}
 	}
 }

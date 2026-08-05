@@ -1,9 +1,15 @@
 package cc.unilock.nilcord.discord;
 
+import cc.unilock.nilcord.NilcordPremain;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.IncomingWebhookClient;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.WebhookClient;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -15,6 +21,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.minecraft.entity.player.EntityServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +29,7 @@ import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cc.unilock.nilcord.NilcordPremain.*;
+import static cc.unilock.nilcord.Nilcord.CONFIG;
 
 public class Discord extends ListenerAdapter {
     private static final Pattern WEBHOOK_ID_REGEX = Pattern.compile("^https://discord\\.com/api/webhooks/(\\d+)/.+$");
@@ -62,12 +69,12 @@ public class Discord extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        LOGGER.info("Bot ready!");
+        NilcordPremain.LOGGER.info("Bot ready!");
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (server == null) return;
+        if (MinecraftServer.getServer() == null) return;
 
         if (CONFIG.formatting.minecraft.discord_message.value().isEmpty()) return;
 
@@ -111,7 +118,7 @@ public class Discord extends ListenerAdapter {
                 message
         );
 
-        server.getConfigurationManager().sendChatMsg(msg);
+        MinecraftServer.getServer().getConfigurationManager().sendChatMsg(msg);
     }
 
     public void onPlayerChatMessage(EntityServerPlayer player, String message) {
@@ -136,6 +143,11 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendMessageToDiscord(String message, @Nullable EntityServerPlayer player) {
+        if (this.shutdown) {
+            NilcordPremain.LOGGER.error("Dropping message \"{}\" due to JDA shutdown!", message);
+            return;
+        }
+
         if (!CONFIG.discord.webhook.enabled.value() || this.webhook == null || player == null) {
             sendBotMessageToDiscord(message);
         } else {
@@ -148,7 +160,7 @@ public class Discord extends ListenerAdapter {
         if (textChannel != null) {
             textChannel.sendMessage(message).queue();
         } else {
-            LOGGER.error("Unable to find channel {}!", CONFIG.discord.channel_id.value());
+            NilcordPremain.LOGGER.error("Unable to find channel {}!", CONFIG.discord.channel_id.value());
         }
     }
 
@@ -179,21 +191,21 @@ public class Discord extends ListenerAdapter {
     private String parseMentions(String message) {
         String msg = message;
 
-        TextChannel textChannel = jda.getTextChannelById(CONFIG.discord.channel_id.value());
+        TextChannel textChannel = this.jda.getTextChannelById(CONFIG.discord.channel_id.value());
         if (textChannel != null) {
             for (Member member : textChannel.getMembers()) {
-                message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+                msg = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
             }
         }
 
-        return message;
+        return msg;
     }
 
     public void startJda() {
         try {
             this.jda.awaitReady();
         } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+            NilcordPremain.LOGGER.error(e.toString());
         }
     }
 
@@ -205,11 +217,11 @@ public class Discord extends ListenerAdapter {
             this.jda.removeEventListener(this);
             this.jda.shutdown();
             if (!this.jda.awaitShutdown(Duration.ofSeconds(3))) {
-                LOGGER.error("JDA shutdown timeout exceeded! Shutting down now...");
+                NilcordPremain.LOGGER.error("JDA shutdown timeout exceeded! Shutting down now...");
                 this.jda.shutdownNow();
             }
         } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+            NilcordPremain.LOGGER.error(e.toString());
         }
     }
 }

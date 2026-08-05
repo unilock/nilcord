@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import net.minecraft.network.NetServerHandler;
 import net.minecraft.network.packet.Packet3Chat;
 import nilloader.api.lib.mini.MiniTransformer;
@@ -24,7 +24,7 @@ public class NetServerHandlerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void chatMessage(NetServerHandler netServerHandler, Packet3Chat packet) {
-			NilcordPremain.listener.playerChatMessage(netServerHandler.playerEntity, packet.message);
+			Nilcord.playerChatMessage(netServerHandler.playerEntity, packet.message);
 		}
 	}
 }

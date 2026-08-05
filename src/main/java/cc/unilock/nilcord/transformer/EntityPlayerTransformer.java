@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityServerPlayer;
 import net.minecraft.stats.Achievement;
@@ -25,7 +25,7 @@ public class EntityPlayerTransformer extends MiniTransformer {
 	public static class Hooks {
 		public static void achievement(EntityPlayer player, StatBase stat) {
 			if (player instanceof EntityServerPlayer && stat instanceof Achievement) {
-				NilcordPremain.listener.playerAchievement((EntityServerPlayer) player, (Achievement) stat);
+				Nilcord.playerAchievement((EntityServerPlayer) player, (Achievement) stat);
 			}
 		}
 	}

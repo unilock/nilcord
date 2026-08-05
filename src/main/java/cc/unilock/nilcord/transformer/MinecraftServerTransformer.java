@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import nilloader.api.lib.mini.MiniTransformer;
 import nilloader.api.lib.mini.PatchContext;
 import nilloader.api.lib.mini.annotation.Patch;
@@ -15,13 +15,13 @@ public class MinecraftServerTransformer extends MiniTransformer {
 		).jumpBefore();
 
 		ctx.add(
-				INVOKESTATIC("cc/unilock/nilcord/transformer/MinecraftServerTransformer$Hooks", "serverStop", "()V")
+				INVOKESTATIC("cc/unilock/nilcord/transformer/MinecraftServerTransformer$Hooks", "serverStopping", "()V")
 		);
 	}
 
 	public static class Hooks {
-		public static void serverStop() {
-			NilcordPremain.listener.serverStop();
+		public static void serverStopping() {
+			Nilcord.serverStopping();
 		}
 	}
 }

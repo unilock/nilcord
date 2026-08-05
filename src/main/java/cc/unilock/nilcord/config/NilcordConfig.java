@@ -55,17 +55,21 @@ public class NilcordConfig extends ReflectiveConfig {
         @Comment("Available placeholders: <username>")
         public final DiscordFormatting discord = new DiscordFormatting();
         public static final class DiscordFormatting extends Section {
-            @Comment("Server init message")
+            @Comment("Server starting message")
             @Comment("Available placeholders: N/A")
-            public final TrackedValue<String> server_init_message = value("**Server starting...**");
+            public final TrackedValue<String> server_starting_message = value("**Server starting...**");
 
-            @Comment("Server start message")
+            @Comment("Server started message")
             @Comment("Available placeholders: N/A")
-            public final TrackedValue<String> server_start_message = value("**Server started!**");
+            public final TrackedValue<String> server_started_message = value("**Server started!**");
 
-            @Comment("Server stop message")
+            @Comment("Server stopping message")
             @Comment("Available placeholders: N/A")
-            public final TrackedValue<String> server_stop_message = value("**Server stopped!**");
+            public final TrackedValue<String> server_stopping_message = value("**Server stopping...**");
+
+            @Comment("Server stopped message")
+            @Comment("Available placeholders: N/A")
+            public final TrackedValue<String> server_stopped_message = value("**Server stopped!**");
 
             @Comment("Server crash message")
             @Comment("Available placeholders: N/A")
@@ -114,7 +118,7 @@ public class NilcordConfig extends ReflectiveConfig {
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
             @Comment("Additional placeholders: <attachment_format> <discord_format> <reply_format> <username_format>")
-            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><<username_format>> <message><attachment_format>");
+            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><<username_format>> <message> <attachment_format>");
 
             @Comment("Username format")
             @Comment("Additional placeholders: N/A")

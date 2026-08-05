@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.transformer;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import net.minecraft.entity.player.EntityServerPlayer;
 import net.minecraft.util.DamageSource;
 import nilloader.api.lib.mini.MiniTransformer;
@@ -22,7 +22,7 @@ public class EntityServerPlayerTransformer extends MiniTransformer {
 
 	public static class Hooks {
 		public static void death(EntityServerPlayer player, DamageSource source) {
-			NilcordPremain.listener.playerDeath(player, source);
+			Nilcord.playerDeath(player, source);
 		}
 	}
 }
