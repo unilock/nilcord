@@ -4,7 +4,7 @@
   "package": "cc.unilock.nilcord.mixin",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
-    "CrashReportMixin"
+    "MinecraftServerMixin"
   ],
   "client": [],
   "injectors": {
