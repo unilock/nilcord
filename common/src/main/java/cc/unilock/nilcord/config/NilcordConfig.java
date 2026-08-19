@@ -12,8 +12,11 @@ public class NilcordConfig extends ReflectiveConfig {
         @Comment("The Discord bot token to use")
         public final TrackedValue<String> token = value("EMPTY");
 
-        @Comment("The Discord channel ID for the bot to send messages to / receive messages from")
-        public final TrackedValue<String> channel_id = value("EMPTY");
+        @Comment("The Discord channel ID(s) for the bot to send messages to")
+        public final TrackedValue<ValueList<String>> send_to = list("", "EMPTY");
+
+        @Comment("The Discord channel ID(s) for the bot to receive messages from")
+        public final TrackedValue<ValueList<String>> receive_from = list("", "EMPTY");
 
         @Comment("Settings pertaining to the Discord webhook")
         public final Webhook webhook = new Webhook();
