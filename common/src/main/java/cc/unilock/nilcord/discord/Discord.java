@@ -5,7 +5,12 @@ import cc.unilock.nilcord.Nilcord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.IncomingWebhookClient;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.WebhookClient;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -75,7 +80,7 @@ public class Discord extends ListenerAdapter {
         if (CONFIG.formatting.minecraft.discord_message.value().isBlank()) return;
 
         if (!event.isFromType(ChannelType.TEXT)) return;
-        if (!event.getChannel().asTextChannel().getId().equals(CONFIG.discord.channel_id.value())) return;
+        if (!CONFIG.discord.receive_from.value().contains(event.getChannel().asTextChannel().getId())) return;
 
         if (!CONFIG.minecraft.show_webhook_messages.value() && event.isWebhookMessage()) return;
 
@@ -152,11 +157,13 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendBotMessageToDiscord(String message) {
-        TextChannel textChannel = this.jda.getTextChannelById(CONFIG.discord.channel_id.value());
-        if (textChannel != null) {
-            textChannel.sendMessage(message).queue();
-        } else {
-            Constants.LOG.error("Unable to find channel {}!", CONFIG.discord.channel_id.value());
+        for (String channel_id : CONFIG.discord.send_to.value()) {
+            TextChannel textChannel = this.jda.getTextChannelById(channel_id);
+            if (textChannel != null) {
+                textChannel.sendMessage(message).queue();
+            } else {
+                Constants.LOG.error("Unable to find channel {}!", channel_id);
+            }
         }
     }
 
@@ -187,10 +194,14 @@ public class Discord extends ListenerAdapter {
     private String parseMentions(String message) {
         String msg = message;
 
-        TextChannel textChannel = this.jda.getTextChannelById(CONFIG.discord.channel_id.value());
-        if (textChannel != null) {
-            for (Member member : textChannel.getMembers()) {
-                msg = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+        for (String channel_id : CONFIG.discord.send_to.value()) {
+            TextChannel textChannel = this.jda.getTextChannelById(channel_id);
+            if (textChannel != null) {
+                for (Member member : textChannel.getMembers()) {
+                    msg = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+                }
+            } else {
+                Constants.LOG.error("Unable to find channel {}!", channel_id);
             }
         }
 
