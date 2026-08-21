@@ -80,7 +80,7 @@ public class Discord extends ListenerAdapter {
         if (CONFIG.formatting.minecraft.discord_message.value().isBlank()) return;
 
         if (!event.isFromType(ChannelType.TEXT)) return;
-        if (!CONFIG.discord.receive_from.value().contains(event.getChannel().asTextChannel().getId())) return;
+        if (!Nilcord.receiveChannels.contains(event.getChannel().asTextChannel().getId())) return;
 
         if (!CONFIG.minecraft.show_webhook_messages.value() && event.isWebhookMessage()) return;
 
@@ -157,7 +157,7 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendBotMessageToDiscord(String message) {
-        for (String channel_id : CONFIG.discord.send_to.value()) {
+        for (String channel_id : Nilcord.sendChannels) {
             TextChannel textChannel = this.jda.getTextChannelById(channel_id);
             if (textChannel != null) {
                 textChannel.sendMessage(message).queue();
@@ -194,7 +194,7 @@ public class Discord extends ListenerAdapter {
     private String parseMentions(String message) {
         String msg = message;
 
-        for (String channel_id : CONFIG.discord.send_to.value()) {
+        for (String channel_id : Nilcord.sendChannels) {
             TextChannel textChannel = this.jda.getTextChannelById(channel_id);
             if (textChannel != null) {
                 for (Member member : textChannel.getMembers()) {
