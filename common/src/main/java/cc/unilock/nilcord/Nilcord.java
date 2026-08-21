@@ -4,6 +4,7 @@ import cc.unilock.nilcord.config.NilcordConfig;
 import cc.unilock.nilcord.discord.Discord;
 import cc.unilock.nilcord.platform.Services;
 import cc.unilock.nilcord.util.TextUtils;
+import folk.sisby.kaleido.lib.quiltconfig.api.Config;
 import net.minecraft.CrashReport;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.DisplayInfo;
@@ -13,8 +14,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.gamerules.GameRules;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Nilcord {
     public static final NilcordConfig CONFIG = NilcordConfig.createToml(Services.PLATFORM.getConfigDir(), "", Constants.MOD_ID, NilcordConfig.class);
+
+    public static Set<String> sendChannels = new HashSet<>();
+    public static Set<String> receiveChannels = new HashSet<>();
 
     public static Discord discord;
     public static MinecraftServer server;
@@ -22,7 +29,26 @@ public class Nilcord {
     private static boolean crash = false;
 
     public static void init() {
+        refreshChannels(CONFIG);
+        CONFIG.registerCallback(Nilcord::refreshChannels);
+
         discord = new Discord();
+    }
+
+    private static void refreshChannels(Config config) {
+        if (config instanceof NilcordConfig nilcordConfig) {
+            sendChannels.clear();
+            receiveChannels.clear();
+
+            var channelId = nilcordConfig.discord.channel_id.value();
+            if (!channelId.isBlank()) {
+                sendChannels.add(channelId);
+                receiveChannels.add(channelId);
+            }
+
+            sendChannels.addAll(nilcordConfig.discord.send_to.value());
+            receiveChannels.addAll(nilcordConfig.discord.receive_from.value());
+        }
     }
 
     public static void serverStarting() {

@@ -10,13 +10,16 @@ public class NilcordConfig extends ReflectiveConfig {
     public final Discord discord = new Discord();
     public static final class Discord extends Section {
         @Comment("The Discord bot token to use")
-        public final TrackedValue<String> token = value("EMPTY");
+        public final TrackedValue<String> token = value("");
 
-        @Comment("The Discord channel ID(s) for the bot to send messages to")
-        public final TrackedValue<ValueList<String>> send_to = list("", "EMPTY");
+        @Comment("The default Discord channel ID for the bot to send messages to / receive messages from. Used ALONGSIDE send_to and receive_from. Can be blank!")
+        public final TrackedValue<String> channel_id = value("");
 
-        @Comment("The Discord channel ID(s) for the bot to receive messages from")
-        public final TrackedValue<ValueList<String>> receive_from = list("", "EMPTY");
+        @Comment("Other Discord channel ID(s) for the bot to send messages to")
+        public final TrackedValue<ValueList<String>> send_to = list("");
+
+        @Comment("Other Discord channel ID(s) for the bot to receive messages from")
+        public final TrackedValue<ValueList<String>> receive_from = list("");
 
         @Comment("Settings pertaining to the Discord webhook")
         public final Webhook webhook = new Webhook();
@@ -25,7 +28,7 @@ public class NilcordConfig extends ReflectiveConfig {
             public final TrackedValue<Boolean> enabled = value(Boolean.FALSE);
 
             @Comment("The webhook URL to use")
-            public final TrackedValue<String> url = value("EMPTY");
+            public final TrackedValue<String> url = value("");
         }
     }
 
@@ -48,7 +51,7 @@ public class NilcordConfig extends ReflectiveConfig {
         public final TrackedValue<Boolean> show_webhook_messages = value(Boolean.TRUE);
 
         @Comment("Application / User IDs to ignore messages from")
-        public final TrackedValue<ValueList<String>> ignored_ids = list("000000000000000000");
+        public final TrackedValue<ValueList<String>> ignored_ids = list("", "000000000000000000");
     }
 
     @Comment("Settings pertaining to message formatting")
