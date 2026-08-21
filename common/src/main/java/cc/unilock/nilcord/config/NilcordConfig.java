@@ -21,15 +21,8 @@ public class NilcordConfig extends ReflectiveConfig {
         @Comment("Other Discord channel ID(s) for the bot to receive messages from")
         public final TrackedValue<ValueList<String>> receive_from = list("");
 
-        @Comment("Settings pertaining to the Discord webhook")
-        public final Webhook webhook = new Webhook();
-        public static final class Webhook extends Section {
-            @Comment("Whether to use a webhook for sending players' chat messages to Discord")
-            public final TrackedValue<Boolean> enabled = value(Boolean.FALSE);
-
-            @Comment("The webhook URL to use")
-            public final TrackedValue<String> url = value("");
-        }
+        @Comment("Whether to use webhooks for sending players' chat messages to Discord")
+        public final TrackedValue<Boolean> webhooks = value(Boolean.FALSE);
     }
 
     @Comment("Settings pertaining to Minecraft itself")
