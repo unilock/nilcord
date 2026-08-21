@@ -53,6 +53,7 @@ public class Nilcord {
 
     public static void serverStarting() {
         discord.startJda();
+        discord.createWebhooks();
 
         if (!CONFIG.formatting.discord.server_starting_message.value().isBlank()) {
             discord.sendMessageToDiscord(CONFIG.formatting.discord.server_starting_message.value());
@@ -95,7 +96,7 @@ public class Nilcord {
     }
 
     public static void playerChatMessage(ServerPlayer player, Component message) {
-        if (CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isBlank() : CONFIG.formatting.discord.chat_message.value().isBlank()) return;
+        if (CONFIG.discord.webhooks.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isBlank() : CONFIG.formatting.discord.chat_message.value().isBlank()) return;
 
         discord.onPlayerChatMessage(player, message);
     }
