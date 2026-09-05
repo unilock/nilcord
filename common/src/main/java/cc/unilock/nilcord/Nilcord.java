@@ -16,6 +16,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class Nilcord {
     public static final NilcordConfig CONFIG = NilcordConfig.createToml(Services.PLATFORM.getConfigDir(), "", Constants.MOD_ID, NilcordConfig.class);
@@ -29,6 +30,10 @@ public class Nilcord {
     private static boolean crash = false;
 
     public static void init() {
+        if (CONFIG.id.value().isBlank()) {
+            CONFIG.id.setValue(UUID.randomUUID().toString().substring(0, 8));
+        }
+
         refreshChannels(CONFIG);
         CONFIG.registerCallback(Nilcord::refreshChannels);
 

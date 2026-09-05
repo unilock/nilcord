@@ -5,6 +5,7 @@ import cc.unilock.nilcord.Nilcord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
@@ -206,7 +207,7 @@ public class Discord extends ListenerAdapter {
             for (String channel : Nilcord.sendChannels) {
                 TextChannel textChannel = this.jda.getTextChannelById(channel);
                 if (textChannel != null) {
-                    String name = "nilcord_"+channel;
+                    String name = CONFIG.id.value()+"_"+channel;
                     // TODO: async?
                     for (Webhook webhook : textChannel.retrieveWebhooks().complete()) {
                         if (name.equals(webhook.getName())) {
@@ -215,7 +216,7 @@ public class Discord extends ListenerAdapter {
                     }
                     this.webhooks.computeIfAbsent(channel, _ -> {
                         // TODO: async?
-                        return WebhookClient.createClient(this.jda, textChannel.createWebhook(name).complete().getUrl());
+                        return WebhookClient.createClient(this.jda, textChannel.createWebhook(name).setAvatar(Icon.from(Constants.ICON, Icon.IconType.PNG)).complete().getUrl());
                     });
                 } else {
                     Constants.LOG.error("Unable to find channel {}!", channel);
