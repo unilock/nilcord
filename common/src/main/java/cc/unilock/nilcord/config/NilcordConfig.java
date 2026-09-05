@@ -6,6 +6,9 @@ import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 
 public class NilcordConfig extends ReflectiveConfig {
+    @Comment("This Nilcord instance's ID. Don't touch this!")
+    public final TrackedValue<String> id = value("");
+
     @Comment("Settings pertaining to Discord itself")
     public final Discord discord = new Discord();
     public static final class Discord extends Section {
