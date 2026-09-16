@@ -131,10 +131,10 @@ public class Nilcord {
 
         if (player.getAdvancements().getOrStartProgress(advancement).isDone()
                 && display != null
-                && display.shouldAnnounceChat()
+                && display.announceToChat()
                 && player.level().getGameRules().get(GameRules.SHOW_ADVANCEMENT_MESSAGES)
         ) {
-            String template = switch (display.getType()) {
+            String template = switch (display.type()) {
                 case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
                 case GOAL -> CONFIG.formatting.discord.advancement_goal_message.value();
                 case TASK -> CONFIG.formatting.discord.advancement_task_message.value();

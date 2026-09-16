@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    // https://github.com/neoforged/NeoForge/blob/26.2.x/gradle.properties#L37
+    // https://github.com/neoforged/NeoForge/blob/26.3.x/gradle.properties#L37
     // https://github.com/FabricMC/fabric-loader/blob/master/gradle.properties#L12
     compileOnly('net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7')
     compileOnly(annotationProcessor('io.github.llamalad7:mixinextras-common:0.5.3'))

@@ -116,8 +116,8 @@ public class TextUtils {
 
     public static Component parseAdvancement(String template, ServerPlayer player, DisplayInfo display) {
         Function<String, Component> placeholders = str -> switch (str) {
-            case "advancement_title" -> display.getTitle();
-            case "advancement_description" -> display.getDescription();
+            case "advancement_title" -> display.title();
+            case "advancement_description" -> display.description();
             default -> null;
         };
 
