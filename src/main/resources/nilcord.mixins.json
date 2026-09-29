@@ -1,13 +1,17 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "cc.unilock.nilcord.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "CrashReportMixin",
-    "PlayerAdvancementTrackerMixin",
-    "PlayerManagerMixin"
+    "MinecraftServerMixin",
+    "PlayerAdvancementTrackerMixin"
   ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
-	}
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }

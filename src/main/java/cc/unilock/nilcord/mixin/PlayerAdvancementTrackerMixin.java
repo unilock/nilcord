@@ -1,6 +1,6 @@
 package cc.unilock.nilcord.mixin;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,6 +17,6 @@ public class PlayerAdvancementTrackerMixin {
 
     @Inject(method = "grantCriterion", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/PlayerAdvancementTracker;onStatusUpdate(Lnet/minecraft/advancement/AdvancementEntry;)V"))
     private void onStatusUpdate(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        NilcordPremain.listener.playerAdvancement(this.owner, advancement);
+        Nilcord.playerAdvancement(this.owner, advancement);
     }
 }

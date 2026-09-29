@@ -1,0 +1,47 @@
+package cc.unilock.nilcord;
+
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.server.network.ServerPlayerEntity;
+
+public class NilcordFabric implements ModInitializer {
+    @Override
+    public void onInitialize() {
+        Nilcord.init();
+
+        // Server starting / stopping events
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            Nilcord.server = server;
+            Nilcord.serverStarting();
+        });
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            Nilcord.serverStarted();
+        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            Nilcord.serverStopping();
+        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            Nilcord.serverStopped();
+            Nilcord.server = null;
+        });
+
+        // Player events
+        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> {
+            Nilcord.playerChatMessage(sender, message.getContent());
+        });
+        ServerPlayerEvents.JOIN.register(player -> {
+            Nilcord.playerJoin(player);
+        });
+        ServerPlayerEvents.LEAVE.register(player -> {
+            Nilcord.playerLeave(player);
+        });
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
+            if (entity instanceof ServerPlayerEntity player) {
+                Nilcord.playerDeath(player, damageSource);
+            }
+        });
+    }
+}

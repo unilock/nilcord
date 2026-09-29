@@ -8,7 +8,7 @@ public class ColorUtils {
     public static final String WHITE = "#" + Integer.toHexString(Color.white.getRGB()).substring(2);
 
     public static String getHexColor(Member member) {
-        Color color = member.getColor();
+        Color color = member.getColors().getPrimary();
         if (color == null) color = Color.white;
         return "#" + Integer.toHexString(color.getRGB()).substring(2);
     }

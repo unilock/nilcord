@@ -14,7 +14,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"cc.unilock.nilcord.NilcordPremain"
+			"cc.unilock.nilcord.NilcordFabric"
 		]
 	},
 	"mixins": [

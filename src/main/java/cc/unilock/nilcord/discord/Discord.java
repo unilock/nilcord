@@ -1,9 +1,17 @@
 package cc.unilock.nilcord.discord;
 
+import cc.unilock.nilcord.Constants;
+import cc.unilock.nilcord.Nilcord;
 import cc.unilock.nilcord.util.TextUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.WebhookClient;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -20,17 +28,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.util.regex.Matcher;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-import static cc.unilock.nilcord.NilcordPremain.*;
+import static cc.unilock.nilcord.Nilcord.CONFIG;
 
 public class Discord extends ListenerAdapter {
-    private static final Pattern WEBHOOK_ID_REGEX = Pattern.compile("^https://discord\\.com/api/webhooks/(\\d+)/.+$");
-
     private final JDA jda;
-    private final IncomingWebhookClient webhook;
-    private final String webhookId;
+    private final Map<String, WebhookClient<Message>> webhooks = new HashMap<>();
+    private final Set<String> webhookIds = new HashSet<>();
 
     private boolean shutdown = false;
 
@@ -46,41 +55,28 @@ public class Discord extends ListenerAdapter {
         } catch (Exception e) {
             throw new RuntimeException("Failed to log into Discord!", e);
         }
-
-        if (CONFIG.discord.webhook.enabled.value()) {
-            try {
-                this.webhook = WebhookClient.createClient(jda, CONFIG.discord.webhook.url.value());
-                Matcher matcher = WEBHOOK_ID_REGEX.matcher(CONFIG.discord.webhook.url.value());
-                this.webhookId = matcher.find() ? matcher.group(1) : null;
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Invalid webhook URL!");
-            }
-        } else {
-            this.webhook = null;
-            this.webhookId = null;
-        }
     }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        LOGGER.info("Bot ready!");
+        Constants.LOG.info("Bot ready!");
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (server == null) return;
+        if (Nilcord.server == null) return;
 
         if (CONFIG.formatting.minecraft.discord_message.value().isBlank()) return;
 
         if (!event.isFromType(ChannelType.TEXT)) return;
-        if (!event.getChannel().asTextChannel().getId().equals(CONFIG.discord.channel_id.value())) return;
+        if (!Nilcord.receiveChannels.contains(event.getChannel().asTextChannel().getId())) return;
 
         if (!CONFIG.minecraft.show_webhook_messages.value() && event.isWebhookMessage()) return;
 
         User author = event.getAuthor();
         if (!CONFIG.minecraft.show_bot_messages.value() && author.isBot()) return;
         if (CONFIG.minecraft.ignored_ids.value().contains(author.getId())) return;
-        if (author.getId().equals(this.jda.getSelfUser().getId()) || author.getId().equals(this.webhookId)) return;
+        if (author.getId().equals(this.jda.getSelfUser().getId()) || webhookIds.contains(author.getId())) return;
 
         Message message = event.getMessage();
         MessageReference ref = message.getMessageReference();
@@ -112,12 +108,12 @@ public class Discord extends ListenerAdapter {
                 message
         );
 
-        server.getPlayerManager().broadcast(msg, false);
+        Nilcord.server.getPlayerManager().broadcast(msg, false);
     }
 
     public void onPlayerChatMessage(ServerPlayerEntity player, Text message) {
         String msg = TextUtils.parseMessage(
-                CONFIG.discord.webhook.enabled.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value(),
+                CONFIG.discord.webhooks.value() ? CONFIG.formatting.discord.webhook.chat_message.value() : CONFIG.formatting.discord.chat_message.value(),
                 player,
                 message
         ).getString();
@@ -137,38 +133,50 @@ public class Discord extends ListenerAdapter {
     }
 
     public void sendMessageToDiscord(String message, @Nullable ServerPlayerEntity player) {
-        if (!CONFIG.discord.webhook.enabled.value() || this.webhook == null || player == null) {
-            sendBotMessageToDiscord(message);
-        } else {
-            sendWebhookMessageToDiscord(message, player);
+        if (this.shutdown) {
+            Constants.LOG.error("Dropping message \"{}\" due to JDA shutdown!", message);
+            return;
+        }
+
+        for (String channel : Nilcord.sendChannels) {
+            if (!CONFIG.discord.webhooks.value() || player == null) {
+                sendBotMessageToDiscord(channel, message);
+            } else {
+                sendWebhookMessageToDiscord(channel, message, player);
+            }
         }
     }
 
-    public void sendBotMessageToDiscord(String message) {
-        TextChannel textChannel = this.jda.getTextChannelById(CONFIG.discord.channel_id.value());
+    public void sendBotMessageToDiscord(String channel_id, String message) {
+        TextChannel textChannel = this.jda.getTextChannelById(channel_id);
         if (textChannel != null) {
             textChannel.sendMessage(message).queue();
         } else {
-            LOGGER.error("Unable to find channel {}!", CONFIG.discord.channel_id.value());
+            Constants.LOG.error("Unable to find channel {}!", channel_id);
         }
     }
 
-    public void sendWebhookMessageToDiscord(String message, ServerPlayerEntity player) {
-        String avatar = TextUtils.parseAvatar(
-                CONFIG.formatting.discord.webhook.avatar_url.value(),
-                player
-        ).getString();
+    public void sendWebhookMessageToDiscord(String channel_id, String message, ServerPlayerEntity player) {
+        WebhookClient<Message> webhook = this.webhooks.get(channel_id);
+        if (webhook != null) {
+            String avatar = TextUtils.parseAvatar(
+                    CONFIG.formatting.discord.webhook.avatar_url.value(),
+                    player
+            ).getString();
 
-        String username = TextUtils.parsePlayer(
-                CONFIG.formatting.discord.webhook.username.value(),
-                player
-        ).getString();
+            String username = TextUtils.parsePlayer(
+                    CONFIG.formatting.discord.webhook.username.value(),
+                    player
+            ).getString();
 
-        try (MessageCreateData data = new MessageCreateBuilder().setContent(message).build()) {
-            webhook.sendMessage(data)
-                    .setAvatarUrl(avatar)
-                    .setUsername(username)
-                    .queue();
+            try (MessageCreateData data = new MessageCreateBuilder().setContent(message).build()) {
+                webhook.sendMessage(data)
+                        .setAvatarUrl(avatar)
+                        .setUsername(username)
+                        .queue();
+            }
+        } else {
+            Constants.LOG.error("Unable to find webhook for channel {}!", channel_id);
         }
     }
 
@@ -180,21 +188,52 @@ public class Discord extends ListenerAdapter {
     private String parseMentions(String message) {
         String msg = message;
 
-        TextChannel textChannel = jda.getTextChannelById(CONFIG.discord.channel_id.value());
-        if (textChannel != null) {
-            for (Member member : textChannel.getMembers()) {
-                message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+        for (String channel : Nilcord.sendChannels) {
+            TextChannel textChannel = this.jda.getTextChannelById(channel);
+            if (textChannel != null) {
+                for (Member member : textChannel.getMembers()) {
+                    msg = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
+                }
+            } else {
+                Constants.LOG.error("Unable to find channel {}!", channel);
             }
         }
 
-        return message;
+        return msg;
+    }
+
+    public void createWebhooks() {
+        if (CONFIG.discord.webhooks.value()) {
+            for (String channel : Nilcord.sendChannels) {
+                TextChannel textChannel = this.jda.getTextChannelById(channel);
+                if (textChannel != null) {
+                    String name = CONFIG.id.value()+"_"+channel;
+                    // TODO: async?
+                    for (Webhook webhook : textChannel.retrieveWebhooks().complete()) {
+                        if (name.equals(webhook.getName())) {
+                            this.webhooks.put(channel, WebhookClient.createClient(this.jda, webhook.getUrl()));
+                        }
+                    }
+                    this.webhooks.computeIfAbsent(channel, s -> {
+                        // TODO: async?
+                        return WebhookClient.createClient(this.jda, textChannel.createWebhook(name).setAvatar(Icon.from(Constants.ICON, Icon.IconType.PNG)).complete().getUrl());
+                    });
+                } else {
+                    Constants.LOG.error("Unable to find channel {}!", channel);
+                }
+            }
+
+            for (WebhookClient<Message> webhook : webhooks.values()) {
+                webhookIds.add(webhook.getId());
+            }
+        }
     }
 
     public void startJda() {
         try {
             this.jda.awaitReady();
         } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+            Constants.LOG.error(e.toString());
         }
     }
 
@@ -206,11 +245,11 @@ public class Discord extends ListenerAdapter {
             this.jda.removeEventListener(this);
             this.jda.shutdown();
             if (!this.jda.awaitShutdown(Duration.ofSeconds(3))) {
-                LOGGER.error("JDA shutdown timeout exceeded! Shutting down now...");
+                Constants.LOG.error("JDA shutdown timeout exceeded! Shutting down now...");
                 this.jda.shutdownNow();
             }
         } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+            Constants.LOG.error(e.toString());
         }
     }
 }

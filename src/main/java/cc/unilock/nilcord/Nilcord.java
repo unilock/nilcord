@@ -1,0 +1,165 @@
+package cc.unilock.nilcord;
+
+import cc.unilock.nilcord.config.NilcordConfig;
+import cc.unilock.nilcord.discord.Discord;
+import cc.unilock.nilcord.util.TextUtils;
+import folk.sisby.kaleido.lib.quiltconfig.api.Config;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.advancement.AdvancementDisplay;
+import net.minecraft.advancement.AdvancementEntry;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.world.GameRules;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+public class Nilcord {
+    public static final NilcordConfig CONFIG = NilcordConfig.createToml(FabricLoader.getInstance().getConfigDir(), "", Constants.MOD_ID, NilcordConfig.class);
+
+    public static Set<String> sendChannels = new HashSet<>();
+    public static Set<String> receiveChannels = new HashSet<>();
+
+    public static Discord discord;
+    public static MinecraftServer server;
+
+    private static boolean crash = false;
+
+    public static void init() {
+        if (CONFIG.id.value().isBlank()) {
+            CONFIG.id.setValue(UUID.randomUUID().toString().substring(0, 8));
+        }
+
+        refreshChannels(CONFIG);
+        CONFIG.registerCallback(Nilcord::refreshChannels);
+
+        discord = new Discord();
+    }
+
+    private static void refreshChannels(Config config) {
+        if (config instanceof NilcordConfig nilcordConfig) {
+            sendChannels.clear();
+            receiveChannels.clear();
+
+            var channelId = nilcordConfig.discord.channel_id.value();
+            if (!channelId.isBlank()) {
+                sendChannels.add(channelId);
+                receiveChannels.add(channelId);
+            }
+
+            sendChannels.addAll(nilcordConfig.discord.send_to.value());
+            receiveChannels.addAll(nilcordConfig.discord.receive_from.value());
+        }
+    }
+
+    public static void serverStarting() {
+        discord.startJda();
+        discord.createWebhooks();
+
+        if (!CONFIG.formatting.discord.server_starting_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_starting_message.value());
+        }
+    }
+
+    public static void serverStarted() {
+        if (!CONFIG.formatting.discord.server_started_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_started_message.value());
+        }
+    }
+
+    public static void serverStopping() {
+        if (crash) return;
+
+        if (!CONFIG.formatting.discord.server_stopping_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopping_message.value());
+        }
+    }
+
+    public static void serverStopped() {
+        if (crash) return;
+
+        if (!CONFIG.formatting.discord.server_stopped_message.value().isBlank()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopped_message.value());
+        }
+
+        discord.stopJda();
+    }
+
+    // TODO: upload report.asString() to mclogs or something (configurable)
+    public static void serverCrash(CrashReport report) {
+        crash = true;
+
+        if (!CONFIG.formatting.discord.server_crash_message.value().isEmpty()) {
+            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
+        }
+
+        discord.stopJda();
+    }
+
+    public static void playerChatMessage(ServerPlayerEntity player, Text message) {
+        if (CONFIG.discord.webhooks.value() ? CONFIG.formatting.discord.webhook.chat_message.value().isBlank() : CONFIG.formatting.discord.chat_message.value().isBlank()) return;
+
+        discord.onPlayerChatMessage(player, message);
+    }
+
+    public static void playerJoin(ServerPlayerEntity player) {
+        if (CONFIG.formatting.discord.join_message.value().isBlank()) return;
+
+        String message = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.join_message.value(),
+                player
+        ).getString();
+        discord.sendMessageToDiscord(message);
+    }
+
+    public static void playerLeave(ServerPlayerEntity player) {
+        if (CONFIG.formatting.discord.leave_message.value().isBlank()) return;
+
+        String message = TextUtils.parsePlayer(
+                CONFIG.formatting.discord.leave_message.value(),
+                player
+        ).getString();
+        discord.sendMessageToDiscord(message);
+    }
+
+    public static void playerAdvancement(ServerPlayerEntity player, AdvancementEntry advancement) {
+        AdvancementDisplay display = advancement.value().display().orElse(null);
+
+        if (player.getAdvancementTracker().getProgress(advancement).isDone()
+                && display != null
+                && display.shouldAnnounceToChat()
+                && player.getServerWorld().getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)
+        ) {
+            String template = switch (display.getFrame()) {
+                case CHALLENGE -> CONFIG.formatting.discord.advancement_challenge_message.value();
+                case GOAL -> CONFIG.formatting.discord.advancement_goal_message.value();
+                case TASK -> CONFIG.formatting.discord.advancement_task_message.value();
+                default -> CONFIG.formatting.discord.advancement_fallback_message.value();
+            };
+
+            if (template.isBlank()) return;
+
+            String message = TextUtils.parseAdvancement(
+                    template,
+                    player,
+                    display
+            ).getString();
+            discord.sendMessageToDiscord(message);
+        }
+    }
+
+    public static void playerDeath(ServerPlayerEntity player, DamageSource source) {
+        if (CONFIG.formatting.discord.death_message.value().isBlank()) return;
+
+        String message = TextUtils.parseDeath(
+                CONFIG.formatting.discord.death_message.value(),
+                player,
+                source
+        ).getString();
+        discord.sendMessageToDiscord(message);
+    }
+}

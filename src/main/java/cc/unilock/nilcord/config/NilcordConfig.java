@@ -6,24 +6,26 @@ import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 
 public class NilcordConfig extends ReflectiveConfig {
+    @Comment("This Nilcord instance's ID. Don't touch this!")
+    public final TrackedValue<String> id = value("");
+
     @Comment("Settings pertaining to Discord itself")
     public final Discord discord = new Discord();
     public static final class Discord extends Section {
         @Comment("The Discord bot token to use")
-        public final TrackedValue<String> token = value("EMPTY");
+        public final TrackedValue<String> token = value("");
 
-        @Comment("The Discord channel ID for the bot to send messages to / receive messages from")
-        public final TrackedValue<String> channel_id = value("EMPTY");
+        @Comment("The default Discord channel ID for the bot to send messages to / receive messages from. Used ALONGSIDE send_to and receive_from. Can be blank!")
+        public final TrackedValue<String> channel_id = value("");
 
-        @Comment("Settings pertaining to the Discord webhook")
-        public final Webhook webhook = new Webhook();
-        public static final class Webhook extends Section {
-            @Comment("Whether to use a webhook for sending players' chat messages to Discord")
-            public final TrackedValue<Boolean> enabled = value(Boolean.FALSE);
+        @Comment("Other Discord channel ID(s) for the bot to send messages to")
+        public final TrackedValue<ValueList<String>> send_to = list("");
 
-            @Comment("The webhook URL to use")
-            public final TrackedValue<String> url = value("EMPTY");
-        }
+        @Comment("Other Discord channel ID(s) for the bot to receive messages from")
+        public final TrackedValue<ValueList<String>> receive_from = list("");
+
+        @Comment("Whether to use webhooks for sending players' chat messages to Discord")
+        public final TrackedValue<Boolean> webhooks = value(Boolean.FALSE);
     }
 
     @Comment("Settings pertaining to Minecraft itself")
@@ -45,7 +47,7 @@ public class NilcordConfig extends ReflectiveConfig {
         public final TrackedValue<Boolean> show_webhook_messages = value(Boolean.TRUE);
 
         @Comment("Application / User IDs to ignore messages from")
-        public final TrackedValue<ValueList<String>> ignored_ids = list("000000000000000000");
+        public final TrackedValue<ValueList<String>> ignored_ids = list("", "000000000000000000");
     }
 
     @Comment("Settings pertaining to message formatting")
@@ -55,17 +57,21 @@ public class NilcordConfig extends ReflectiveConfig {
         @Comment("Available placeholders: <displayname> <username>")
         public final DiscordFormatting discord = new DiscordFormatting();
         public static final class DiscordFormatting extends Section {
-            @Comment("Server init message")
+            @Comment("Server starting message")
             @Comment("Available placeholders: N/A")
-            public final TrackedValue<String> server_init_message = value("**Server starting...**");
+            public final TrackedValue<String> server_starting_message = value("**Server starting...**");
 
-            @Comment("Server start message")
+            @Comment("Server started message")
             @Comment("Available placeholders: N/A")
-            public final TrackedValue<String> server_start_message = value("**Server started!**");
+            public final TrackedValue<String> server_started_message = value("**Server started!**");
 
-            @Comment("Server stop message")
+            @Comment("Server stopping message")
             @Comment("Available placeholders: N/A")
-            public final TrackedValue<String> server_stop_message = value("**Server stopped!**");
+            public final TrackedValue<String> server_stopping_message = value("**Server stopping...**");
+
+            @Comment("Server stopped message")
+            @Comment("Available placeholders: N/A")
+            public final TrackedValue<String> server_stopped_message = value("**Server stopped!**");
 
             @Comment("Server crash message")
             @Comment("Available placeholders: N/A")
@@ -123,23 +129,23 @@ public class NilcordConfig extends ReflectiveConfig {
         public static final class MinecraftFormatting extends Section {
             @Comment("Discord messages")
             @Comment("Additional placeholders: <attachment_format> <discord_format> <reply_format> <username_format>")
-            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><click:open_url:'<message_url>'><<username_format>></click> <message><attachment_format>");
+            public final TrackedValue<String> discord_message = value("[Discord] <reply_format><click type:open_url value:'<message_url>'><<username_format>></click> <message><attachment_format>");
 
             @Comment("Username format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> username_format = value("<hover:show_text:'@<username>'><color:'<role_color>'><nickname></color></hover>");
+            public final TrackedValue<String> username_format = value("<hover type:show_text value:'@<username>'><color value:'<role_color>'><nickname></color></hover>");
 
             @Comment("Mention format")
             @Comment("Additional placeholders: N/A")
-            public final TrackedValue<String> mention_format = value("<underline><hover:show_text:'@<username>'>@<nickname></hover></underline>");
+            public final TrackedValue<String> mention_format = value("<underline><hover type:show_text value:'@<username>'>@<nickname></hover></underline>");
 
             @Comment("Reply format")
             @Comment("Additional placeholders: <reply_message> <reply_nickname> <reply_role_color> <reply_url> <reply_username>")
-            public final TrackedValue<String> reply_format = value("<click:open_url:'<reply_url>'><hover:show_text:'@<reply_username>: <reply_message>'>[<aqua>←</aqua><color:'<reply_role_color>'><reply_nickname></color>]</hover></click> ");
+            public final TrackedValue<String> reply_format = value("<click type:open_url value:'<reply_url>'><hover type:show_text value:'@<reply_username>: <reply_message>'>[<aqua>←</aqua><color value:'<reply_role_color>'><reply_nickname></color>]</hover></click> ");
 
             @Comment("Attachment format")
             @Comment("Additional placeholders: <attachment_url>")
-            public final TrackedValue<String> attachment_format = value("<click:open_url:'<attachment_url>'>[<aqua>Attachment</aqua>]</click>");
+            public final TrackedValue<String> attachment_format = value("<click type:open_url value:'<attachment_url>'>[<aqua>Attachment</aqua>]</click>");
         }
     }
 }

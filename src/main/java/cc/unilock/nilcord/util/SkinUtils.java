@@ -1,14 +1,14 @@
 package cc.unilock.nilcord.util;
 
-import cc.unilock.nilcord.NilcordPremain;
+import cc.unilock.nilcord.Nilcord;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTextures;
 
-import static cc.unilock.nilcord.NilcordPremain.CONFIG;
+import static cc.unilock.nilcord.Nilcord.CONFIG;
 
 public class SkinUtils {
     public static Skin getSkin(GameProfile profile) {
-        MinecraftProfileTextures mpt = NilcordPremain.server.getSessionService().getTextures(profile);
+        MinecraftProfileTextures mpt = Nilcord.server.getSessionService().getTextures(profile);
 
         if (mpt.skin() != null) {
             String model = mpt.skin().getMetadata("model");
