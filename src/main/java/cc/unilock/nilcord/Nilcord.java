@@ -72,18 +72,18 @@ public class Nilcord {
     }
 
     public static void serverStopping() {
-        if (crash) return;
-
-        if (!CONFIG.formatting.discord.server_stopping_message.value().isBlank()) {
-            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopping_message.value());
+        if (!crash) {
+            if (!CONFIG.formatting.discord.server_stopping_message.value().isBlank()) {
+                discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopping_message.value());
+            }
         }
     }
 
     public static void serverStopped() {
-        if (crash) return;
-
-        if (!CONFIG.formatting.discord.server_stopped_message.value().isBlank()) {
-            discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopped_message.value());
+        if (!crash) {
+            if (!CONFIG.formatting.discord.server_stopped_message.value().isBlank()) {
+                discord.sendMessageToDiscord(CONFIG.formatting.discord.server_stopped_message.value());
+            }
         }
 
         discord.stopJda();
@@ -96,8 +96,6 @@ public class Nilcord {
         if (!CONFIG.formatting.discord.server_crash_message.value().isEmpty()) {
             discord.sendMessageToDiscord(CONFIG.formatting.discord.server_crash_message.value());
         }
-
-        discord.stopJda();
     }
 
     public static void playerChatMessage(ServerPlayerEntity player, Text message) {

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
     @Inject(method = "runServer()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"))
-    private void writeToFile(CallbackInfo ci, @Local CrashReport report) {
+    private void runServer$setCrashReport(CallbackInfo ci, @Local CrashReport report) {
         Nilcord.serverCrash(report);
     }
 }
