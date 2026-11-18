@@ -177,7 +177,7 @@ public class Discord extends ListenerAdapter {
 
         TextChannel textChannel = jda.getTextChannelById(CONFIG.discord.channel_id.value());
         if (textChannel != null) {
-            for (Member member : jda.getTextChannelById(CONFIG.discord.channel_id.value()).getMembers()) {
+            for (Member member : textChannel.getMembers()) {
                 message = Pattern.compile(Pattern.quote("@" + member.getUser().getName()), Pattern.CASE_INSENSITIVE).matcher(msg).replaceAll(member.getAsMention());
             }
         }

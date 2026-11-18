@@ -12,7 +12,7 @@ import serverutils.handlers.ServerUtilitiesServerEventHandler;
 @Mixin(value = ServerUtilitiesServerEventHandler.class, remap = false)
 public class ServerUtilitiesServerEventHandlerMixin {
     @Inject(method = "onServerTick", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;[Ljava/lang/Object;)V"), remap = false)
-    private void onServerTick(CallbackInfo ci, @Local(name = "player") EntityPlayerMP player, @Local(name = "isAFK") boolean isAFK) {
+    private static void onServerTick(CallbackInfo ci, @Local(name = "player") EntityPlayerMP player, @Local(name = "isAFK") boolean isAFK) {
         ServerUtilitiesCompat.onAfk(player, isAFK);
     }
 }
